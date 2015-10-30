@@ -60,7 +60,7 @@ end;
 
 function TConfig.GetOrCreateConfigFile: TINIFile;
 begin
-  if not FileExists(configPath) then
+  if not FileExistsUTF8(configPath) then
   begin
     Result := TIniFile.Create(configPath);
     Result.WriteString('system', 'foo', 'bar');

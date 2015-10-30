@@ -21,9 +21,9 @@ begin
   WriteLn('config start');
   config := TConfig.Create;
   if not DirectoryExistsUTF8(config.GetConfigPath)
-  then CreateDir(config.GetConfigPath);
+  then CreateDirUTF8(config.GetConfigPath);
   if not DirectoryExistsUTF8(config.GetDatabasesPath)
-  then CreateDir(config.GetDatabasesPath);
+  then CreateDirUTF8(config.GetDatabasesPath);
   try
     configFile := config.GetOrCreateConfigFile;
     if not IsEmptyStr(key, [#9]) then
