@@ -30,11 +30,21 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <Units Count="1">
+    <Units Count="3">
       <Unit0>
         <Filename Value="sharpanal.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
+      <Unit1>
+        <Filename Value="commands\initcommand.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="InitCommand"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="commands\linkcommand.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="LinkCommand"/>
+      </Unit2>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -45,6 +55,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="commands"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
   </CompilerOptions>

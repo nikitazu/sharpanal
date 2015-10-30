@@ -6,7 +6,7 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes, SysUtils, CustApp
+  Classes, SysUtils, CustApp, InitCommand, LinkCommand
   { you can add units after this };
 
 type
@@ -20,7 +20,6 @@ type
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
     procedure WriteHelp; virtual;
-    procedure InitCommand;
   end;
 
 { TSharpAnal }
@@ -30,7 +29,7 @@ var
   ErrorMsg: String;
 begin
   // quick check parameters
-  ErrorMsg:=CheckOptions('hi','help init');
+  ErrorMsg:=CheckOptions('hil','help init link');
   if ErrorMsg<>'' then begin
     ShowException(Exception.Create(ErrorMsg));
     Terminate;
@@ -45,12 +44,16 @@ begin
   end;
 
   if HasOption('i','init') then begin
-    InitCommand;
+    InitCommand.Run(GetOptionValue('i','init'));
     Terminate;
     Exit;
   end;
 
-  { add your program here }
+  if HasOption('l','link') then begin
+    LinkCommand.Run(GetOptionValue('l','link'));
+    Terminate;
+    Exit;
+  end;
 
   // stop program loop
   Terminate;
@@ -71,13 +74,6 @@ procedure TSharpAnal.WriteHelp;
 begin
   { add your help code here }
   writeln('Usage: ',ExeName,' -h');
-end;
-
-procedure TSharpAnal.InitCommand;
-begin
-  { initialize new C# project analizer }
-  writeln('init start');
-  writeln('init done');
 end;
 
 var
