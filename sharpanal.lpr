@@ -6,8 +6,9 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes, SysUtils, CustApp, InitCommand, LinkCommand, ConfigCommand, Configuration
-  { you can add units after this };
+  Classes, SysUtils, CustApp, FileUtil,
+  { you can add units after this }
+  InitCommand, LinkCommand, ConfigCommand, Configuration;
 
 type
 
@@ -61,6 +62,9 @@ begin
     Exit;
   end;
 
+  // no commands found, print usage
+  // TODO: replace it with interactive mode
+  WriteHelp;
   // stop program loop
   Terminate;
 end;
@@ -77,9 +81,14 @@ begin
 end;
 
 procedure TSharpAnal.WriteHelp;
+var
+  filename: String;
 begin
-  { add your help code here }
-  writeln('Usage: ',ExeName,' -h');
+  filename := ExtractFileNameOnly(ExeName);
+  writeln('Usage: ',filename,' -h');
+  writeln(filename,' --config key');
+  writeln(filename,' --init dbname');
+  writeln(filename,' --link path/to/solution.sln --name dbname');
 end;
 
 var
