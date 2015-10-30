@@ -17,7 +17,6 @@ type
     function GetSolutionPath(projectName: String): String;
     function GetOrCreateConfigFile: TINIFile;
   private
-    appDataDir: String;
     appDir: String;
     databasesDir: String;
     configPath: String;
@@ -25,16 +24,10 @@ type
 
 implementation
 
-// Windows
-// LOCALAPPDATA=X:\Users\username\AppData\Local\
-// X:\Users\username\AppData\Local\sharpanal\
-// X:\Users\username\AppData\Local\sharpanal\config.ini
-
 constructor TConfig.Create;
 begin
-  appDataDir := AppendPathDelim(GetEnvironmentVariable('LOCALAPPDATA'));
-  appDir := appDataDir + AppendPathDelim('sharpanal');
-  databasesDir := appDir + AppendPathDelim('db');
+  appDir := GetAppConfigDirUTF8(false, true);
+  databasesDir := AppendPathDelim(appDir) + AppendPathDelim('db');
   configPath := appDir + 'config.ini';
 end;
 
