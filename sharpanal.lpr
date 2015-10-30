@@ -6,7 +6,7 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes, SysUtils, CustApp, InitCommand, LinkCommand
+  Classes, SysUtils, CustApp, InitCommand, LinkCommand, ConfigCommand
   { you can add units after this };
 
 type
@@ -29,7 +29,7 @@ var
   ErrorMsg: String;
 begin
   // quick check parameters
-  ErrorMsg:=CheckOptions('hil','help init link');
+  ErrorMsg:=CheckOptions('hcil','help config init link');
   if ErrorMsg<>'' then begin
     ShowException(Exception.Create(ErrorMsg));
     Terminate;
@@ -39,6 +39,12 @@ begin
   // parse parameters
   if HasOption('h','help') then begin
     WriteHelp;
+    Terminate;
+    Exit;
+  end;
+
+  if HasOption('c','config') then begin
+    ConfigCommand.Run(GetOptionValue('c','config'));
     Terminate;
     Exit;
   end;
