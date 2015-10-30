@@ -5,48 +5,36 @@ unit ConfigCommand;
 interface
 
 uses
-  Classes, SysUtils, strutils, FileUtil, INIFiles;
+  Classes, SysUtils, strutils, FileUtil, INIFiles,
+  Configuration;
 
 procedure Run(key: String);
-function GetOrCreateConfigFile(configPath: String): TINIFile;
 
 implementation
 
-// Windows
-// LOCALAPPDATA=X:\Users\username\AppData\Local\
-// X:\Users\username\AppData\Local\sharpanal\
-// X:\Users\username\AppData\Local\sharpanal\config.ini
-
 procedure Run(key: String);
 var
-  allConfigs: String;
-  configDir: String;
-  configPath: String;
-  config: TINIFile;
+  config: TConfig;
+  configFile: TINIFile;
   value: String;
 begin
   WriteLn('config start');
-  allConfigs := AppendPathDelim(GetEnvironmentVariable('LOCALAPPDATA'));
-  configDir := allConfigs + 'sharpanal\';
-  configPath := configDir + 'config.ini';
-  if not DirectoryExists(configDir) then CreateDir(configDir);
-  config := GetOrCreateConfigFile(configPath);
-  if not IsEmptyStr(key, [#9]) then
-  begin
-    value := config.ReadString('system', key, '');
-    WriteLn('config: ' + key + '=' + value);
-  end
-  else WriteLn('config: no key asked');
-end;
-
-function GetOrCreateConfigFile(configPath: String): TINIFile;
-begin
-  if not FileExists(configPath) then
-  begin
-    Result := TIniFile.Create(configPath);
-    Result.WriteString('system', 'foo', 'bar');
-  end
-  else Result := TIniFile.Create(configPath);
+  config := TConfig.Create;
+  if not DirectoryExistsUTF8(config.GetConfigPath)
+  then CreateDir(config.GetConfigPath);
+  if not DirectoryExistsUTF8(config.GetDatabasesPath)
+  then CreateDir(config.GetDatabasesPath);
+  try
+    configFile := config.GetOrCreateConfigFile;
+    if not IsEmptyStr(key, [#9]) then
+    begin
+      value := configFile.ReadString('system', key, '');
+      WriteLn('config: ' + key + '=' + value);
+    end
+    else WriteLn('config: no key asked');
+  finally
+    configFile.Free;
+  end;
 end;
 
 end.

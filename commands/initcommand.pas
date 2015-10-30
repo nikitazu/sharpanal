@@ -5,26 +5,31 @@ unit InitCommand;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils,
+  Configuration;
 
-procedure Run(path: String);
+procedure Run(projectName: String);
 
 implementation
 
-procedure Run(path: String);
+procedure Run(projectName: String);
+var
+  config: TConfig;
+  databasePath: String;
 begin
-  writeln('init start');
-  writeln('init path: ' + path);
-  if DirectoryExists(path) or FileExists(path) then
+  writeln('init start: ' + projectName);
+  config := TConfig.Create;
+  databasePath := config.GetDatabasePath(projectName);
+  if DirectoryExists(databasePath) or FileExists(databasePath) then
   begin
-    writeln('init error: path already exists - ' + path);
+    writeln('init error: path already exists - ' + databasePath);
     writeln('init hint: initialize to not yet created directory');
   end
   else
   begin
-    writeln('create dir: ' + path);
-    CreateDir(path);
-    writeln('init done');
+    writeln('create dir: ' + databasePath);
+    if CreateDir(databasePath) then writeln('init done')
+    else WriteLn('init error: unable to create ' + databasePath);
   end;
 end;
 
