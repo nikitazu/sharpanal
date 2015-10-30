@@ -1,0 +1,14 @@
+# Generated
+*.[oa]
+*.ppu
+*.lps
+*.or
+*.rst
+*.compiled
+*.bak*
+
+# IDE generated
+lib/*
+bin/*
+railgun.res
+railgun.ico
