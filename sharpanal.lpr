@@ -6,7 +6,7 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes, SysUtils, CustApp, FileUtil,
+  Classes, SysUtils, strutils, CustApp, FileUtil,
   { you can add units after this }
   Configuration,
   InitCommand, LinkCommand, ConfigCommand, UpdateIndexCommand;
@@ -29,9 +29,60 @@ type
 procedure TSharpAnal.DoRun;
 var
   ErrorMsg: String;
+  commandName: String;
 begin
+  if ParamCount < 1 then begin
+    WriteLn('no command specified, abort');
+    Terminate;
+    Exit;
+  end;
+
+  commandName := ParamStr(1);
+  if AnsiStartsStr('-', commandName) then begin
+    WriteLn('wrong command name ',
+      commandName,
+      ', options should follow after command name');
+    Terminate;
+    Exit;
+  end;
+
+  case commandName of
+  'config':
+    begin
+      ErrorMsg:=CheckOptions('hk:v:','help key: value:');
+      if ErrorMsg<>'' then ShowException(Exception.Create(ErrorMsg))
+      else ConfigCommand.Run(GetOptionValue('k','key'));
+      Terminate;
+      Exit;
+    end;
+  'init':
+    begin
+      ErrorMsg:=CheckOptions('hn:','help name:');
+      if ErrorMsg<>'' then ShowException(Exception.Create(ErrorMsg))
+      else InitCommand.Run(GetOptionValue('n','name'));
+      Terminate;
+      Exit;
+    end;
+  'link':
+    begin
+      ErrorMsg:=CheckOptions('hn:p:','help name: path:');
+      if ErrorMsg<>'' then ShowException(Exception.Create(ErrorMsg))
+      else LinkCommand.Run(GetOptionValue('n','name'), GetOptionValue('p','path'));
+      Terminate;
+      Exit;
+    end;
+  'update':
+    begin
+      ErrorMsg:=CheckOptions('hn:','help name:');
+      if ErrorMsg<>'' then ShowException(Exception.Create(ErrorMsg))
+      else UpdateIndexCommand.Run(GetOptionValue('n','name'));
+      Terminate;
+      Exit;
+    end;
+  end;
+
   // quick check parameters
-  ErrorMsg:=CheckOptions('hcilun','help config init link update name');
+  ErrorMsg:=CheckOptions('h','help');
   if ErrorMsg<>'' then begin
     ShowException(Exception.Create(ErrorMsg));
     Terminate;
@@ -41,30 +92,6 @@ begin
   // parse parameters
   if HasOption('h','help') then begin
     WriteHelp;
-    Terminate;
-    Exit;
-  end;
-
-  if HasOption('c','config') then begin
-    ConfigCommand.Run(GetOptionValue('c','config'));
-    Terminate;
-    Exit;
-  end;
-
-  if HasOption('i','init') then begin
-    InitCommand.Run(GetOptionValue('i','init'));
-    Terminate;
-    Exit;
-  end;
-
-  if HasOption('l','link') then begin
-    LinkCommand.Run(GetOptionValue('n','name'), GetOptionValue('l','link'));
-    Terminate;
-    Exit;
-  end;
-
-  if HasOption('u','update') then begin
-    UpdateIndexCommand.Run(GetOptionValue('u','update'));
     Terminate;
     Exit;
   end;
@@ -93,10 +120,10 @@ var
 begin
   filename := ExtractFileNameOnly(ExeName);
   writeln('Usage: ',filename,' -h');
-  writeln(filename,' --config key');
-  writeln(filename,' --init dbname');
-  writeln(filename,' --link path/to/solution.sln --name dbname');
-  writeln(filename,' --update dbname');
+  writeln(filename,' config --key foo');
+  writeln(filename,' init --name db');
+  writeln(filename,' link --name db --path vs/projects/solution.sln');
+  writeln(filename,' update --name db');
 end;
 
 var
