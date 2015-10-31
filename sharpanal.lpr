@@ -8,10 +8,9 @@ uses
   {$ENDIF}{$ENDIF}
   Classes, SysUtils, CustApp,
   { you can add units after this }
-  strutils, FileUtil,
-  Configuration,
+  strutils,
   AbstractCommand,
-  InitCommand, LinkCommand, ConfigCommand, UpdateIndexCommand, HelpCommand;
+  CommandsManager;
 
 type
 
@@ -45,16 +44,8 @@ begin
     Exit;
   end;
 
-  command := nil;
-  case commandName of
-  'config': command := TConfigCommand.Create(self, commandName);
-  'init':   command := TInitCommand.Create(self, commandName);
-  'link':   command := TLinkCommand.Create(self, commandName);
-  'update': command := TUpdateCommand.Create(self, commandName);
-  otherwise command := THelpCommand.Create(self, commandName);
-  end;
-
-  if command <> nil then command.Run;
+  command := TCommandsManager.Find(commandName).Create(self);
+  command.Run;
 
   // stop program loop
   Terminate;

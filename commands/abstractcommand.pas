@@ -11,13 +11,14 @@ type
   TAbstractCommand = class(TComponent)
     public
       constructor Create(aOwner: TComponent); override;
-      constructor Create(app: TCustomApplication; aName: String);
+      constructor Create(app: TCustomApplication);
       destructor Destroy; override;
       procedure Run; virtual;
     protected
-      _name: String;
       _app: TCustomApplication;
   end;
+
+  TAbstractCommandClass = Class of TAbstractCommand;
 
 implementation
 
@@ -26,18 +27,17 @@ begin
   inherited;
 end;
 
-constructor TAbstractCommand.Create(app: TCustomApplication; aName: String);
+constructor TAbstractCommand.Create(app: TCustomApplication);
 begin
+  WriteLn('create command [', ClassName, ']');
   inherited Create(app);
-  _name := aName;
   _app := app;
-  WriteLn('command [', _name, '] create');
-  WriteLn('command [', _name, '] create done');
 end;
 
 destructor TAbstractCommand.Destroy;
 begin
-  WriteLn('command [', _name, '] destroyed');
+  WriteLn('destroy command [', ClassName, ']');
+  _app := nil; // app is the owner do not free it
   inherited;
 end;
 
