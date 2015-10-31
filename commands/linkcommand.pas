@@ -5,7 +5,7 @@ unit LinkCommand;
 interface
 
 uses
-  Classes, SysUtils, INIFiles, FileUtil,
+  Classes, SysUtils, FileUtil,
   Configuration, AbstractCommand;
 
 type
@@ -30,7 +30,6 @@ var
   projectName: String;
   pathToSolution: String;
   config: TConfig;
-  configFile: TINIFile;
 begin
   projectName := _app.GetOptionValue('n','name');
   pathToSolution := _app.GetOptionValue('p','path');
@@ -43,12 +42,7 @@ begin
   and AssertDirExists(config.GetDatabasePath(projectName), 'name should be the same as in init command')
   and AssertFileExists(pathToSolution, 'path should lead to Visual Studio solution file')
   then begin
-    try
-      configFile := config.GetOrCreateConfigFile;
-      configFile.WriteString('links', projectName, pathToSolution);
-    finally
-      configFile.Free;
-    end;
+    config.SetSolutionPath(projectName, pathToSolution);
   end;
 end;
 
