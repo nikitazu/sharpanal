@@ -48,12 +48,6 @@ begin
       WriteLn('TODO');
     end;
   end;
-
-  if IsEmptyStr(Trim(projectName), [#9]) then
-  begin
-    Error('missing argument - name');
-    Log('hint: name should be the same as in init command');
-  end;
 end;
 
 function TUpdateCommand.ShortOptions: String;
