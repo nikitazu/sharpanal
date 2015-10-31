@@ -5,7 +5,8 @@ unit UpdateIndexCommand;
 interface
 
 uses
-  Classes, SysUtils, Configuration;
+  Classes, SysUtils, strutils,
+  Configuration;
 
 procedure Run(projectName: String);
 
@@ -19,6 +20,11 @@ begin
   writeln('update start: ' + projectName);
   config := TConfig.Create;
   databasePath := config.GetDatabasePath(projectName);
+  if IsEmptyStr(Trim(projectName), [#9]) then
+  begin
+    writeln('update error: missing argument - name');
+    writeln('update hint: name should be the same as in init command');
+  end;
   writeln('update done');
 end;
 

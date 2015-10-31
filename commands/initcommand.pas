@@ -5,7 +5,7 @@ unit InitCommand;
 interface
 
 uses
-  Classes, SysUtils, FileUtil,
+  Classes, SysUtils, FileUtil, strutils,
   Configuration;
 
 procedure Run(projectName: String);
@@ -20,7 +20,11 @@ begin
   writeln('init start: ' + projectName);
   config := TConfig.Create;
   databasePath := config.GetDatabasePath(projectName);
-  if DirectoryExistsUTF8(databasePath) or FileExistsUTF8(databasePath) then
+  if IsEmptyStr(Trim(projectName), [#9]) then
+  begin
+    writeln('init error: missing argument - name');
+  end
+  else if DirectoryExistsUTF8(databasePath) or FileExistsUTF8(databasePath) then
   begin
     writeln('init error: path already exists - ' + databasePath);
     writeln('init hint: initialize to not yet created directory');

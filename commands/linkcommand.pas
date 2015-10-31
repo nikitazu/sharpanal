@@ -19,7 +19,7 @@ var
 begin
   writeln('link start: ' + pathToSolution);
   config := TConfig.Create;
-  if IsEmptyStr(projectName, [#9]) then
+  if IsEmptyStr(Trim(projectName), [#9]) then
   begin
     writeln('link error: missing argument - name');
     writeln('link hint: name should be the same as in init command');
