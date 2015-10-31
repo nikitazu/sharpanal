@@ -25,37 +25,37 @@ end;
 procedure TInitCommand.Run;
 var
   projectName: String;
-  error: String;
+  argsError: String;
   config: TConfig;
   databasePath: String;
 begin
   inherited;
-  error := _app.CheckOptions('hn:','help name:');
-  if error <> '' then begin
-     _app.ShowException(Exception.Create(error));
+  argsError := _app.CheckOptions('hvn:','help verbose name:');
+  if argsError <> '' then begin
+     _app.ShowException(Exception.Create(argsError));
      _app.Terminate;
      Exit;
   end;
 
   projectName := _app.GetOptionValue('n','name');
 
-  writeln('init start: ' + projectName);
+  Log('start: ' + projectName);
   config := TConfig.Create;
   databasePath := config.GetDatabasePath(projectName);
   if IsEmptyStr(Trim(projectName), [#9]) then
   begin
-    writeln('init error: missing argument - name');
+    Error('missing argument - name');
   end
   else if DirectoryExistsUTF8(databasePath) or FileExistsUTF8(databasePath) then
   begin
-    writeln('init error: path already exists - ' + databasePath);
-    writeln('init hint: initialize to not yet created directory');
+    Error('path already exists - ' + databasePath);
+    Log('hint: initialize to not yet created directory');
   end
   else
   begin
-    writeln('create dir: ' + databasePath);
+    Log('create dir: ' + databasePath);
     if CreateDirUTF8(databasePath) then writeln('init done')
-    else WriteLn('init error: unable to create ' + databasePath);
+    else Error('unable to create ' + databasePath);
   end;
 end;
 

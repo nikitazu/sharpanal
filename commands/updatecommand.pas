@@ -24,29 +24,29 @@ end;
 
 procedure TUpdateCommand.Run;
 var
-  error: String;
+  argsError: String;
   projectName: String;
   config: TConfig;
   databasePath: String;
 begin
   inherited;
-  error := _app.CheckOptions('hn:','help name:');
-  if error <> '' then begin
-     _app.ShowException(Exception.Create(error));
+  argsError := _app.CheckOptions('hvn:','help verbose name:');
+  if argsError <> '' then begin
+     _app.ShowException(Exception.Create(argsError));
      _app.Terminate;
      Exit;
   end;
 
   projectName := _app.GetOptionValue('n','name');
-  writeln('update start: ' + projectName);
+  Log('start: ' + projectName);
   config := TConfig.Create;
   databasePath := config.GetDatabasePath(projectName);
   if IsEmptyStr(Trim(projectName), [#9]) then
   begin
-    writeln('update error: missing argument - name');
-    writeln('update hint: name should be the same as in init command');
+    Error('missing argument - name');
+    Log('hint: name should be the same as in init command');
   end;
-  writeln('update done');
+  Log('done');
 end;
 
 end.

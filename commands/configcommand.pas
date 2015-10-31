@@ -25,22 +25,22 @@ end;
 procedure TConfigCommand.Run;
 var
   key: String;
-  error: String;
+  argsError: String;
   config: TConfig;
   configFile: TINIFile;
   value: String;
 begin
   inherited;
-  error := _app.CheckOptions('hk:v:','help key: value:');
-  if error <> '' then begin
-     _app.ShowException(Exception.Create(error));
+  argsError := _app.CheckOptions('hvk:s:','help verbose key: set:');
+  if argsError <> '' then begin
+     _app.ShowException(Exception.Create(argsError));
      _app.Terminate;
      Exit;
   end;
 
   key := _app.GetOptionValue('k','key');
 
-  WriteLn('config start');
+  Log('start');
   config := TConfig.Create;
   if not DirectoryExistsUTF8(config.GetConfigPath)
   then CreateDirUTF8(config.GetConfigPath);
@@ -51,9 +51,9 @@ begin
     if not IsEmptyStr(key, [#9]) then
     begin
       value := configFile.ReadString('system', key, '');
-      WriteLn('config: ' + key + '=' + value);
+      WriteLn(key + '=' + value);
     end
-    else WriteLn('config: no key asked');
+    else Error('no key asked');
   finally
     configFile.Free;
   end;

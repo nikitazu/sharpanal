@@ -28,14 +28,14 @@ procedure TLinkCommand.Run;
 var
   projectName: String;
   pathToSolution: String;
-  error: String;
+  argsError: String;
   config: TConfig;
   configFile: TINIFile;
 begin
   inherited;
-  error := _app.CheckOptions('hn:p:','help name: path:');
-  if error <> '' then begin
-     _app.ShowException(Exception.Create(error));
+  argsError := _app.CheckOptions('hvn:p:','help verbose name: path:');
+  if argsError <> '' then begin
+     _app.ShowException(Exception.Create(argsError));
      _app.Terminate;
      Exit;
   end;
@@ -43,27 +43,32 @@ begin
   projectName := _app.GetOptionValue('n','name');
   pathToSolution := _app.GetOptionValue('p','path');
 
-  writeln('link start: ' + pathToSolution);
+  Log('start: ' + pathToSolution);
   config := TConfig.Create;
   if IsEmptyStr(Trim(projectName), [#9]) then
   begin
-    writeln('link error: missing argument - name');
-    writeln('link hint: name should be the same as in init command');
+    Error('missing argument - name');
+    Log('hint: name should be the same as in init command');
   end
   else if not DirectoryExistsUTF8(config.GetDatabasePath(projectName)) then
   begin
-    writeln('link error: database not found - ' + projectName);
-    writeln('link hint: name should be the same as in init command');
+    Error('database not found - ' + projectName);
+    Log('hint: name should be the same as in init command');
+  end
+  else if IsEmptyStr(Trim(pathToSolution), [#9]) then
+  begin
+    Error('missing argument - path');
+    Log('hint: path should lead to Visual Studio solution file');
   end
   else if not FileExistsUTF8(pathToSolution) then
   begin
-    writeln('link error: file not found - ' + pathToSolution);
-    writeln('link hint: path should lead to Visual Studio solution file');
+    Error('file not found - ' + pathToSolution);
+    Log('hint: path should lead to Visual Studio solution file');
   end
   else if not DirectoryExistsUTF8(config.GetDatabasePath(projectName)) then
   begin
-    writeln('link error: analizer not initialized - ' + projectName);
-    writeln('link hint: use init ' + projectName);
+    Error('analizer not initialized - ' + projectName);
+    Log('hint: use init ' + projectName);
   end
   else
   begin
@@ -73,7 +78,7 @@ begin
     finally
       configFile.Free;
     end;
-    writeln('link done');
+    Log('done');
   end;
 end;
 

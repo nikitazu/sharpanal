@@ -37,9 +37,9 @@ begin
     commandName := ParamStr(1);
 
   if AnsiStartsStr('-', commandName) then begin
-    WriteLn('wrong command name ',
-      commandName,
-      ', options should follow after command name');
+    WriteLn(StdErr,
+      Format('ERROR: wrong command name %s options should follow after command name',
+      [commandName]));
     Terminate;
     Exit;
   end;
