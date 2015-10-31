@@ -10,7 +10,7 @@ uses
   ConfigCommand,
   InitCommand,
   LinkCommand,
-  UpdateIndexCommand,
+  UpdateCommand,
   HelpCommand;
 
 type

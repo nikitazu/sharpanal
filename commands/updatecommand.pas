@@ -1,4 +1,4 @@
-unit UpdateIndexCommand;
+unit UpdateCommand;
 
 {$mode objfpc}{$H+}
 

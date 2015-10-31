@@ -61,9 +61,9 @@
         <UnitName Value="Configuration"/>
       </Unit4>
       <Unit5>
-        <Filename Value="commands\updateindexcommand.pas"/>
+        <Filename Value="commands\updatecommand.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UpdateIndexCommand"/>
+        <UnitName Value="UpdateCommand"/>
       </Unit5>
       <Unit6>
         <Filename Value="commands\abstractcommand.pas"/>
