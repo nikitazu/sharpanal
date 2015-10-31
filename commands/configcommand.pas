@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, strutils, FileUtil,
-  Configuration, AbstractCommand;
+  AbstractCommand;
 
 type
   TConfigCommand = class(TAbstractCommand)
@@ -28,20 +28,18 @@ end;
 procedure TConfigCommand.OnRun;
 var
   key: String;
-  config: TConfig;
   value: String;
 begin
   key := _app.GetOptionValue('k','key');
-  config := TConfig.Create;
 
-  if not DirectoryExistsUTF8(config.GetConfigPath)
-  then CreateDirUTF8(config.GetConfigPath);
-  if not DirectoryExistsUTF8(config.GetDatabasesPath)
-  then CreateDirUTF8(config.GetDatabasesPath);
+  if not DirectoryExistsUTF8(_config.GetConfigPath)
+  then CreateDirUTF8(_config.GetConfigPath);
+  if not DirectoryExistsUTF8(_config.GetDatabasesPath)
+  then CreateDirUTF8(_config.GetDatabasesPath);
   begin
     Log('start');
     if not IsEmptyStr(key, [#9]) then begin
-      value := config.GetValue('system', key, '');
+      value := _config.GetValue('system', key, '');
       WriteLn(key + '=' + value);
     end
     else Error('no key asked');

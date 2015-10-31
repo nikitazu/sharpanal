@@ -7,7 +7,8 @@ interface
 uses
   Classes, SysUtils, CustApp,
   strutils, FileUtil,
-  LazLogger;
+  LazLogger,
+  Configuration;
 
 type
   TAbstractCommand = class(TComponent)
@@ -42,6 +43,7 @@ type
     protected
       _app: TCustomApplication;
       _optionsError: String;
+      _config: TConfig;
     private
       _isDebug: Boolean;
   end;
@@ -62,11 +64,13 @@ begin
   _optionsError := '';
   _isDebug := _app.HasOption('v','verbose');
   Log('create');
+  _config := TConfig.Create;
 end;
 
 destructor TAbstractCommand.Destroy;
 begin
   Log('destroy');
+  FreeAndNil(_config);
   _app := nil; // app is the owner do not free it
   inherited;
 end;

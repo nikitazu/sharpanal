@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil,
-  Configuration, AbstractCommand;
+  AbstractCommand;
 
 type
   TInitCommand = class(TAbstractCommand)
@@ -28,14 +28,12 @@ end;
 procedure TInitCommand.OnRun;
 var
   projectName: String;
-  config: TConfig;
   databasePath: String;
 begin
   projectName := _app.GetOptionValue('n','name');
 
   Log('start: ' + projectName);
-  config := TConfig.Create;
-  databasePath := config.GetDatabasePath(projectName);
+  databasePath := _config.GetDatabasePath(projectName);
 
   if AssertNotEmpty(projectName, 'name', 'name should be a string')
   and AssertPathNotExists(databasePath, 'initialize to not yet created directory')

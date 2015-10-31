@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil,
-  Configuration, AbstractCommand;
+  AbstractCommand;
 
 type
   TLinkCommand = class(TAbstractCommand)
@@ -29,20 +29,18 @@ procedure TLinkCommand.OnRun;
 var
   projectName: String;
   pathToSolution: String;
-  config: TConfig;
 begin
   projectName := _app.GetOptionValue('n','name');
   pathToSolution := _app.GetOptionValue('p','path');
 
   Log('start: ' + pathToSolution);
-  config := TConfig.Create;
 
   if AssertNotEmpty(projectName, 'name', 'name should be the same as in init command')
   and AssertNotEmpty(pathToSolution, 'path', 'path should lead to Visual Studio solution file')
-  and AssertDirExists(config.GetDatabasePath(projectName), 'name should be the same as in init command')
+  and AssertDirExists(_config.GetDatabasePath(projectName), 'name should be the same as in init command')
   and AssertFileExists(pathToSolution, 'path should lead to Visual Studio solution file')
   then begin
-    config.SetSolutionPath(projectName, pathToSolution);
+    _config.SetSolutionPath(projectName, pathToSolution);
   end;
 end;
 

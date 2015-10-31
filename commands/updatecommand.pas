@@ -5,8 +5,8 @@ unit UpdateCommand;
 interface
 
 uses
-  Classes, SysUtils, strutils,
-  Configuration, AbstractCommand;
+  Classes, SysUtils,
+  AbstractCommand;
 
 type
   TUpdateCommand = class(TAbstractCommand)
@@ -28,7 +28,6 @@ end;
 procedure TUpdateCommand.OnRun;
 var
   projectName: String;
-  config: TConfig;
   databasePath: String;
   pathToSolution: String;
 begin
@@ -37,9 +36,8 @@ begin
   if AssertNotEmpty(projectName, 'name', 'name should be the same as in init command')
   then begin
     Log('start: ' + projectName);
-    config := TConfig.Create;
-    databasePath := config.GetDatabasePath(projectName);
-    pathToSolution := config.GetSolutionPath(projectName);
+    databasePath := _config.GetDatabasePath(projectName);
+    pathToSolution := _config.GetSolutionPath(projectName);
     if AssertNotEmpty(pathToSolution, 'path', 'path should lead to Visual Studio solution file')
     and AssertDirExists(databasePath, 'name should be the same as in init command')
     and AssertFileExists(pathToSolution, 'path should lead to Visual Studio solution file')
