@@ -5,7 +5,7 @@ unit LinkCommand;
 interface
 
 uses
-  Classes, SysUtils, strutils, INIFiles, FileUtil,
+  Classes, SysUtils, INIFiles, FileUtil,
   Configuration, AbstractCommand;
 
 type
@@ -37,33 +37,12 @@ begin
 
   Log('start: ' + pathToSolution);
   config := TConfig.Create;
-  if IsEmptyStr(Trim(projectName), [#9]) then
-  begin
-    Error('missing argument - name');
-    Log('hint: name should be the same as in init command');
-  end
-  else if not DirectoryExistsUTF8(config.GetDatabasePath(projectName)) then
-  begin
-    Error('database not found - ' + projectName);
-    Log('hint: name should be the same as in init command');
-  end
-  else if IsEmptyStr(Trim(pathToSolution), [#9]) then
-  begin
-    Error('missing argument - path');
-    Log('hint: path should lead to Visual Studio solution file');
-  end
-  else if not FileExistsUTF8(pathToSolution) then
-  begin
-    Error('file not found - ' + pathToSolution);
-    Log('hint: path should lead to Visual Studio solution file');
-  end
-  else if not DirectoryExistsUTF8(config.GetDatabasePath(projectName)) then
-  begin
-    Error('analizer not initialized - ' + projectName);
-    Log('hint: use init ' + projectName);
-  end
-  else
-  begin
+
+  if AssertNotEmpty(projectName, 'name', 'name should be the same as in init command')
+  and AssertNotEmpty(pathToSolution, 'path', 'path should lead to Visual Studio solution file')
+  and AssertDirExists(config.GetDatabasePath(projectName), 'name should be the same as in init command')
+  and AssertFileExists(pathToSolution, 'path should lead to Visual Studio solution file')
+  then begin
     try
       configFile := config.GetOrCreateConfigFile;
       configFile.WriteString('links', projectName, pathToSolution);

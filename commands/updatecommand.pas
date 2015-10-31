@@ -30,11 +30,25 @@ var
   projectName: String;
   config: TConfig;
   databasePath: String;
+  pathToSolution: String;
 begin
   projectName := _app.GetOptionValue('n','name');
-  Log('start: ' + projectName);
-  config := TConfig.Create;
-  databasePath := config.GetDatabasePath(projectName);
+
+  if AssertNotEmpty(projectName, 'name', 'name should be the same as in init command')
+  then begin
+    Log('start: ' + projectName);
+    config := TConfig.Create;
+    databasePath := config.GetDatabasePath(projectName);
+    pathToSolution := config.GetSolutionPath(projectName);
+    if AssertNotEmpty(pathToSolution, 'path', 'path should lead to Visual Studio solution file')
+    and AssertDirExists(databasePath, 'name should be the same as in init command')
+    and AssertFileExists(pathToSolution, 'path should lead to Visual Studio solution file')
+    then begin
+      Log('analizing ' + pathToSolution);
+      WriteLn('TODO');
+    end;
+  end;
+
   if IsEmptyStr(Trim(projectName), [#9]) then
   begin
     Error('missing argument - name');

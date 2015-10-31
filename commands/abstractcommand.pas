@@ -6,6 +6,7 @@ interface
 
 uses
   Classes, SysUtils, CustApp,
+  strutils, FileUtil,
   LazLogger;
 
 type
@@ -21,6 +22,23 @@ type
       procedure Error(message: String);
       function ShortOptions: String; virtual;
       function LongOptions: String; virtual;
+
+      function AssertNotEmpty(
+        optionValue: String;
+        optionName: String;
+        hint: String): Boolean;
+
+      function AssertPathNotExists(
+        path: String;
+        hint: String): Boolean;
+
+      function AssertDirExists(
+        path: String;
+        hint: String): Boolean;
+
+      function AssertFileExists(
+        path: String;
+        hint: String): Boolean;
     protected
       _app: TCustomApplication;
       _optionsError: String;
@@ -89,6 +107,47 @@ end;
 function TAbstractCommand.LongOptions: String;
 begin
   Result := '';
+end;
+
+function TAbstractCommand.AssertNotEmpty(
+  optionValue: String;
+  optionName: String;
+  hint: String): Boolean;
+begin
+  Result := not IsEmptyStr(Trim(optionValue), [#9]);
+  if not Result then
+  Error(Format(
+    'option %s expects not empty value%shint: %s',
+    [optionName, LineEnding, hint]));
+end;
+
+function TAbstractCommand.AssertPathNotExists(
+  path: String;
+  hint: String): Boolean;
+begin
+  Result := not DirectoryExistsUTF8(path) and not FileExistsUTF8(path);
+  if not Result then
+  Error(Format(
+    'path %s already exists%shint: %s',
+    [path, LineEnding, hint]));
+end;
+
+function TAbstractCommand.AssertDirExists(
+  path: String;
+  hint: String): Boolean;
+begin
+  Result := DirectoryExistsUTF8(path);
+  if not Result then
+  Error(Format('directory not found %s%shint: %s', [path, LineEnding, hint]));
+end;
+
+function TAbstractCommand.AssertFileExists(
+  path: String;
+  hint: String): Boolean;
+begin
+  Result := FileExistsUTF8(path);
+  if not Result then
+  Error(Format('file not found %s%shint: %s', [path, LineEnding, hint]));
 end;
 
 end.

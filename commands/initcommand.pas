@@ -5,7 +5,7 @@ unit InitCommand;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, strutils,
+  Classes, SysUtils, FileUtil,
   Configuration, AbstractCommand;
 
 type
@@ -36,17 +36,10 @@ begin
   Log('start: ' + projectName);
   config := TConfig.Create;
   databasePath := config.GetDatabasePath(projectName);
-  if IsEmptyStr(Trim(projectName), [#9]) then
-  begin
-    Error('missing argument - name');
-  end
-  else if DirectoryExistsUTF8(databasePath) or FileExistsUTF8(databasePath) then
-  begin
-    Error('path already exists - ' + databasePath);
-    Log('hint: initialize to not yet created directory');
-  end
-  else
-  begin
+
+  if AssertNotEmpty(projectName, 'name', 'name should be a string')
+  and AssertPathNotExists(databasePath, 'initialize to not yet created directory')
+  then begin
     Log('create dir: ' + databasePath);
     if not CreateDirUTF8(databasePath)
     then Error('unable to create ' + databasePath);
