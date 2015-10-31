@@ -26,6 +26,19 @@ procedure TSolutionModelTests.TestLoad;
 begin
   _solution.Load('..\testdata\analyze\csharp\SimpleWallet.sln');
   AssertEquals('Name', 'SimpleWallet', _solution.Name);
+  AssertEquals('Projects count', 3, _solution.Projects.Count);
+
+  AssertEquals('Project 1',
+    'SimpleWallet\SimpleWallet.csproj',
+    _solution.Projects[0]);
+
+  AssertEquals('Project 2',
+    'SimpleWallet.Core\SimpleWallet.Core.csproj',
+    _solution.Projects[1]);
+
+  AssertEquals('Project 3',
+    'SimpleWallet.Core.Tests\SimpleWallet.Core.Tests.csproj',
+    _solution.Projects[2]);
 end;
 
 procedure TSolutionModelTests.SetUp;
