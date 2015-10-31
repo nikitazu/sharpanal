@@ -35,7 +35,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="9">
+    <Units Count="12">
       <Unit0>
         <Filename Value="sharpanal.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -80,6 +80,21 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="CommandsManager"/>
       </Unit8>
+      <Unit9>
+        <Filename Value="analyze\csharp\solutionmodel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SolutionModel"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="analyze\csharp\projectmodel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ProjectModel"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="analyze\csharp\filemodel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FileModel"/>
+      </Unit11>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -90,7 +105,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="commands;common"/>
+      <OtherUnitFiles Value="commands;common;analyze\csharp"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
   </CompilerOptions>

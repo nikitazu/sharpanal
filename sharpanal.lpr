@@ -10,7 +10,7 @@ uses
   { you can add units after this }
   strutils,
   AbstractCommand,
-  CommandsManager;
+  CommandsManager, SolutionModel, ProjectModel, FileModel;
 
 type
 
