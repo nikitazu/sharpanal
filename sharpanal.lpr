@@ -54,7 +54,13 @@ begin
   otherwise command := THelpCommand.Create('help', self);
   end;
 
-  if command <> nil then command.Run;
+  if command <> nil then begin
+    try
+      command.Run;
+    finally
+      command.Free;
+    end;
+  end;
 
   // stop program loop
   Terminate;

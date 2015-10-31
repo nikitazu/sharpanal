@@ -11,6 +11,7 @@ type
   TAbstractCommand = class(TObject)
     public
       constructor Create(name: String; app: TCustomApplication);
+      destructor Destroy; override;
       procedure Run; virtual;
     protected
       _name: String;
@@ -25,6 +26,11 @@ begin
   _app := app;
   WriteLn('command [', _name, '] create');
   WriteLn('command [', _name, '] create done');
+end;
+
+destructor TAbstractCommand.Destroy;
+begin
+  WriteLn('command [', _name, '] destroyed');
 end;
 
 procedure TAbstractCommand.Run;
