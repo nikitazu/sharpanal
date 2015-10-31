@@ -12,7 +12,8 @@ type
   TInitCommand = class(TAbstractCommand)
     public
       class function CommandName: ShortString;
-      procedure Run; override;
+    protected
+      procedure OnRun; override;
   end;
 
 implementation
@@ -22,14 +23,13 @@ begin
   Result := 'init';
 end;
 
-procedure TInitCommand.Run;
+procedure TInitCommand.OnRun;
 var
   projectName: String;
   argsError: String;
   config: TConfig;
   databasePath: String;
 begin
-  inherited;
   argsError := _app.CheckOptions('hvn:','help verbose name:');
   if argsError <> '' then begin
      _app.ShowException(Exception.Create(argsError));
@@ -54,8 +54,8 @@ begin
   else
   begin
     Log('create dir: ' + databasePath);
-    if CreateDirUTF8(databasePath) then writeln('init done')
-    else Error('unable to create ' + databasePath);
+    if not CreateDirUTF8(databasePath)
+    then Error('unable to create ' + databasePath);
   end;
 end;
 

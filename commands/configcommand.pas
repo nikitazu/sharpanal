@@ -12,7 +12,8 @@ type
   TConfigCommand = class(TAbstractCommand)
     public
       class function CommandName: ShortString;
-      procedure Run; override;
+    protected
+      procedure OnRun; override;
   end;
 
 implementation
@@ -22,7 +23,7 @@ begin
   Result := 'config';
 end;
 
-procedure TConfigCommand.Run;
+procedure TConfigCommand.OnRun;
 var
   key: String;
   argsError: String;
@@ -30,7 +31,6 @@ var
   configFile: TINIFile;
   value: String;
 begin
-  inherited;
   argsError := _app.CheckOptions('hvk:s:','help verbose key: set:');
   if argsError <> '' then begin
      _app.ShowException(Exception.Create(argsError));

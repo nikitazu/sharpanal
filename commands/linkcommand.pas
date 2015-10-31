@@ -12,7 +12,8 @@ type
   TLinkCommand = class(TAbstractCommand)
     public
       class function CommandName: ShortString;
-      procedure Run; override;
+    protected
+      procedure OnRun; override;
   end;
 
 implementation
@@ -24,7 +25,7 @@ begin
 end;
 
 
-procedure TLinkCommand.Run;
+procedure TLinkCommand.OnRun;
 var
   projectName: String;
   pathToSolution: String;
@@ -32,7 +33,6 @@ var
   config: TConfig;
   configFile: TINIFile;
 begin
-  inherited;
   argsError := _app.CheckOptions('hvn:p:','help verbose name: path:');
   if argsError <> '' then begin
      _app.ShowException(Exception.Create(argsError));
@@ -78,7 +78,6 @@ begin
     finally
       configFile.Free;
     end;
-    Log('done');
   end;
 end;
 

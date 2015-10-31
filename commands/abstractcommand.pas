@@ -14,8 +14,9 @@ type
       constructor Create(aOwner: TComponent); override;
       constructor Create(app: TCustomApplication);
       destructor Destroy; override;
-      procedure Run; virtual;
+      procedure Run;
     protected
+      procedure OnRun; virtual; abstract;
       procedure Log(message: String);
       procedure Error(message: String);
     protected
@@ -51,6 +52,8 @@ end;
 procedure TAbstractCommand.Run;
 begin
   Log('run');
+  OnRun;
+  Log('done');
 end;
 
 procedure TAbstractCommand.Log(message: String);

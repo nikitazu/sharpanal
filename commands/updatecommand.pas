@@ -12,7 +12,8 @@ type
   TUpdateCommand = class(TAbstractCommand)
     public
       class function CommandName: ShortString;
-      procedure Run; override;
+    protected
+      procedure OnRun; override;
   end;
 
 implementation
@@ -22,14 +23,13 @@ begin
   Result := 'update';
 end;
 
-procedure TUpdateCommand.Run;
+procedure TUpdateCommand.OnRun;
 var
   argsError: String;
   projectName: String;
   config: TConfig;
   databasePath: String;
 begin
-  inherited;
   argsError := _app.CheckOptions('hvn:','help verbose name:');
   if argsError <> '' then begin
      _app.ShowException(Exception.Create(argsError));
@@ -46,7 +46,6 @@ begin
     Error('missing argument - name');
     Log('hint: name should be the same as in init command');
   end;
-  Log('done');
 end;
 
 end.

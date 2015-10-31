@@ -12,7 +12,8 @@ type
   THelpCommand = class(TAbstractCommand)
     public
       class function CommandName: ShortString;
-      procedure Run; override;
+    protected
+      procedure OnRun; override;
   end;
 
 implementation
@@ -22,11 +23,10 @@ begin
   Result := 'help';
 end;
 
-procedure THelpCommand.Run;
+procedure THelpCommand.OnRun;
 var
   filename: String;
 begin
-  inherited;
   filename := ExtractFileNameOnly(_app.ExeName);
   writeln('Usage: ',filename,' -h');
   writeln(filename,' config --key foo');
