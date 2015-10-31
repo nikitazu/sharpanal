@@ -10,7 +10,7 @@ uses
   { you can add units after this }
   Configuration,
   AbstractCommand,
-  InitCommand, LinkCommand, ConfigCommand, UpdateIndexCommand;
+  InitCommand, LinkCommand, ConfigCommand, UpdateIndexCommand, HelpCommand;
 
 type
 
@@ -29,17 +29,14 @@ type
 
 procedure TSharpAnal.DoRun;
 var
-  ErrorMsg: String;
   commandName: String;
   command: TAbstractCommand;
 begin
-  if ParamCount < 1 then begin
-    WriteLn('no command specified, abort');
-    Terminate;
-    Exit;
-  end;
+  if ParamCount < 1 then
+    commandName := ''
+  else
+    commandName := ParamStr(1);
 
-  commandName := ParamStr(1);
   if AnsiStartsStr('-', commandName) then begin
     WriteLn('wrong command name ',
       commandName,
@@ -50,41 +47,15 @@ begin
 
   command := nil;
   case commandName of
-  'config':
-      command := TConfigCommand.Create(commandName, self);
-  'init':
-      command := TInitCommand.Create(commandName, self);
-  'link':
-      command := TLinkCommand.Create(commandName, self);
-  'update':
-      command := TUpdateCommand.Create(commandName, self);
+  'config': command := TConfigCommand.Create(commandName, self);
+  'init':   command := TInitCommand.Create(commandName, self);
+  'link':   command := TLinkCommand.Create(commandName, self);
+  'update': command := TUpdateCommand.Create(commandName, self);
+  otherwise command := THelpCommand.Create('help', self);
   end;
 
-  if command <> nil then begin
-    WriteLn('running command');
-    command.Run;
-    Terminate;
-    Exit;
-  end;
+  if command <> nil then command.Run;
 
-  // quick check parameters
-  ErrorMsg:=CheckOptions('h','help');
-  if ErrorMsg<>'' then begin
-    ShowException(Exception.Create(ErrorMsg));
-    Terminate;
-    Exit;
-  end;
-
-  // parse parameters
-  if HasOption('h','help') then begin
-    WriteHelp;
-    Terminate;
-    Exit;
-  end;
-
-  // no commands found, print usage
-  // TODO: replace it with interactive mode
-  WriteHelp;
   // stop program loop
   Terminate;
 end;
