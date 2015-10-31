@@ -47,8 +47,15 @@ begin
 end;
 
 function TConfig.GetSolutionPath(projectName: String): String;
+var
+  config: TIniFile;
 begin
-  Result := projectName + '';
+  config := TIniFile.Create(configPath);
+  try
+    Result := config.ReadString('links', projectName, '');
+  finally
+    config.Free;
+  end;
 end;
 
 function TConfig.GetOrCreateConfigFile: TINIFile;
