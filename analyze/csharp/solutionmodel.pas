@@ -11,12 +11,14 @@ uses
 type
   TSolutionModel = Class(TComponent)
     private
+      _title: String;
       _projects: TStringList;
     public
       constructor Create(aOwner: TComponent); override;
       destructor Destroy; override;
       procedure Load(path: String);
     published
+      property Title: String read _title write _title;
       property Projects: TStringList read _projects write _projects;
   end;
 
@@ -41,7 +43,7 @@ var
   currentProjectPath: String;
 begin
   if FileExistsUTF8(path) then begin
-    Name := ExtractFileNameOnly(ExtractFileNameWithoutExt(path));
+    Title := ExtractFileNameOnly(path);
     AssignFile(f, path);
     try
       Reset(f);

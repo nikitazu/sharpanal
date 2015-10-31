@@ -25,7 +25,7 @@ implementation
 procedure TSolutionModelTests.TestLoad;
 begin
   _solution.Load('..\testdata\analyze\csharp\SimpleWallet.sln');
-  AssertEquals('Name', 'SimpleWallet', _solution.Name);
+  AssertEquals('Title', 'SimpleWallet', _solution.Title);
   AssertEquals('Projects count', 3, _solution.Projects.Count);
 
   AssertEquals('Project 1',
