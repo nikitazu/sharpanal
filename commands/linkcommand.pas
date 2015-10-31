@@ -6,17 +6,35 @@ interface
 
 uses
   Classes, SysUtils, strutils, INIFiles, FileUtil,
-  Configuration;
+  Configuration, AbstractCommand;
 
-procedure Run(projectName: String; pathToSolution: String);
+type
+  TLinkCommand = class(TAbstractCommand)
+    public
+      procedure Run; override;
+  end;
 
 implementation
 
-procedure Run(projectName: String; pathToSolution: String);
+procedure TLinkCommand.Run;
 var
+  projectName: String;
+  pathToSolution: String;
+  error: String;
   config: TConfig;
   configFile: TINIFile;
 begin
+
+  error := _app.CheckOptions('hn:p:','help name: path:');
+  if error <> '' then begin
+     _app.ShowException(Exception.Create(error));
+     _app.Terminate;
+     Exit;
+  end;
+
+  projectName := _app.GetOptionValue('n','name');
+  pathToSolution := _app.GetOptionValue('p','path');
+
   writeln('link start: ' + pathToSolution);
   config := TConfig.Create;
   if IsEmptyStr(Trim(projectName), [#9]) then

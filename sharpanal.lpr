@@ -9,6 +9,7 @@ uses
   Classes, SysUtils, strutils, CustApp, FileUtil,
   { you can add units after this }
   Configuration,
+  AbstractCommand,
   InitCommand, LinkCommand, ConfigCommand, UpdateIndexCommand;
 
 type
@@ -30,6 +31,7 @@ procedure TSharpAnal.DoRun;
 var
   ErrorMsg: String;
   commandName: String;
+  command: TAbstractCommand;
 begin
   if ParamCount < 1 then begin
     WriteLn('no command specified, abort');
@@ -46,39 +48,23 @@ begin
     Exit;
   end;
 
+  command := nil;
   case commandName of
   'config':
-    begin
-      ErrorMsg:=CheckOptions('hk:v:','help key: value:');
-      if ErrorMsg<>'' then ShowException(Exception.Create(ErrorMsg))
-      else ConfigCommand.Run(GetOptionValue('k','key'));
-      Terminate;
-      Exit;
-    end;
+      command := TConfigCommand.Create(commandName, self);
   'init':
-    begin
-      ErrorMsg:=CheckOptions('hn:','help name:');
-      if ErrorMsg<>'' then ShowException(Exception.Create(ErrorMsg))
-      else InitCommand.Run(GetOptionValue('n','name'));
-      Terminate;
-      Exit;
-    end;
+      command := TInitCommand.Create(commandName, self);
   'link':
-    begin
-      ErrorMsg:=CheckOptions('hn:p:','help name: path:');
-      if ErrorMsg<>'' then ShowException(Exception.Create(ErrorMsg))
-      else LinkCommand.Run(GetOptionValue('n','name'), GetOptionValue('p','path'));
-      Terminate;
-      Exit;
-    end;
+      command := TLinkCommand.Create(commandName, self);
   'update':
-    begin
-      ErrorMsg:=CheckOptions('hn:','help name:');
-      if ErrorMsg<>'' then ShowException(Exception.Create(ErrorMsg))
-      else UpdateIndexCommand.Run(GetOptionValue('n','name'));
-      Terminate;
-      Exit;
-    end;
+      command := TUpdateCommand.Create(commandName, self);
+  end;
+
+  if command <> nil then begin
+    WriteLn('running command');
+    command.Run;
+    Terminate;
+    Exit;
   end;
 
   // quick check parameters

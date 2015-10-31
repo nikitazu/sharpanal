@@ -6,17 +6,33 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, strutils,
-  Configuration;
+  Configuration, AbstractCommand;
 
-procedure Run(projectName: String);
+type
+  TInitCommand = class(TAbstractCommand)
+    public
+      procedure Run; override;
+  end;
 
 implementation
 
-procedure Run(projectName: String);
+procedure TInitCommand.Run;
 var
+  projectName: String;
+  error: String;
   config: TConfig;
   databasePath: String;
 begin
+
+  error := _app.CheckOptions('hn:','help name:');
+  if error <> '' then begin
+     _app.ShowException(Exception.Create(error));
+     _app.Terminate;
+     Exit;
+  end;
+
+  projectName := _app.GetOptionValue('n','name');
+
   writeln('init start: ' + projectName);
   config := TConfig.Create;
   databasePath := config.GetDatabasePath(projectName);

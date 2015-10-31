@@ -6,18 +6,34 @@ interface
 
 uses
   Classes, SysUtils, strutils, FileUtil, INIFiles,
-  Configuration;
+  Configuration, AbstractCommand;
 
-procedure Run(key: String);
+type
+  TConfigCommand = class(TAbstractCommand)
+    public
+      procedure Run; override;
+  end;
 
 implementation
 
-procedure Run(key: String);
+procedure TConfigCommand.Run;
 var
+  key: String;
+  error: String;
   config: TConfig;
   configFile: TINIFile;
   value: String;
 begin
+
+  error := _app.CheckOptions('hk:v:','help key: value:');
+  if error <> '' then begin
+     _app.ShowException(Exception.Create(error));
+     _app.Terminate;
+     Exit;
+  end;
+
+  key := _app.GetOptionValue('k','key');
+
   WriteLn('config start');
   config := TConfig.Create;
   if not DirectoryExistsUTF8(config.GetConfigPath)
