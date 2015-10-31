@@ -11,10 +11,18 @@ uses
 type
   TLinkCommand = class(TAbstractCommand)
     public
+      class function CommandName: ShortString;
       procedure Run; override;
   end;
 
 implementation
+
+
+class function TLinkCommand.CommandName: ShortString;
+begin
+  Result := 'link';
+end;
+
 
 procedure TLinkCommand.Run;
 var

@@ -11,10 +11,16 @@ uses
 type
   TUpdateCommand = class(TAbstractCommand)
     public
+      class function CommandName: ShortString;
       procedure Run; override;
   end;
 
 implementation
+
+class function TUpdateCommand.CommandName: ShortString;
+begin
+  Result := 'update';
+end;
 
 procedure TUpdateCommand.Run;
 var

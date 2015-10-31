@@ -11,10 +11,16 @@ uses
 type
   TInitCommand = class(TAbstractCommand)
     public
+      class function CommandName: ShortString;
       procedure Run; override;
   end;
 
 implementation
+
+class function TInitCommand.CommandName: ShortString;
+begin
+  Result := 'init';
+end;
 
 procedure TInitCommand.Run;
 var

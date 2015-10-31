@@ -31,12 +31,11 @@ class constructor TCommandsManager.Create;
 begin
   WriteLn('create commands');
   _commands := TFPHashList.Create;
-  _commands.Add(UpperCase(TConfigCommand.ClassName), TConfigCommand.ClassType);
-  _commands.Add(UpperCase(TInitCommand.ClassName), TInitCommand.ClassType);
-  _commands.Add(UpperCase(TLinkCommand.ClassName), TLinkCommand.ClassType);
-  _commands.Add(UpperCase(TUpdateCommand.ClassName), TUpdateCommand.ClassType);
-  _commands.Add(UpperCase(THelpCommand.ClassName), THelpCommand.ClassType);
-  WriteLn('create commands done');
+  _commands.Add(TConfigCommand.CommandName, TConfigCommand.ClassType);
+  _commands.Add(TInitCommand.CommandName, TInitCommand.ClassType);
+  _commands.Add(TLinkCommand.CommandName, TLinkCommand.ClassType);
+  _commands.Add(TUpdateCommand.CommandName, TUpdateCommand.ClassType);
+  _commands.Add(THelpCommand.CommandName, THelpCommand.ClassType);
 end;
 
 class destructor TCommandsManager.Destroy;
@@ -46,11 +45,8 @@ begin
 end;
 
 class function TCommandsManager.Find(name: ShortString): TAbstractCommandClass;
-var
-  commandName: ShortString;
 begin
-  commandName := 'T' + UpperCase(name) + 'COMMAND';
-  Result := TAbstractCommandClass(_commands.Find(commandName));
+  Result := TAbstractCommandClass(_commands.Find(name));
   if Result = nil then Result := TAbstractCommandClass(THelpCommand.ClassType);
 end;
 

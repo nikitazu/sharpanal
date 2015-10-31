@@ -11,10 +11,16 @@ uses
 type
   TConfigCommand = class(TAbstractCommand)
     public
+      class function CommandName: ShortString;
       procedure Run; override;
   end;
 
 implementation
+
+class function TConfigCommand.CommandName: ShortString;
+begin
+  Result := 'config';
+end;
 
 procedure TConfigCommand.Run;
 var

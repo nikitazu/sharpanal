@@ -11,10 +11,16 @@ uses
 type
   THelpCommand = class(TAbstractCommand)
     public
+      class function CommandName: ShortString;
       procedure Run; override;
   end;
 
 implementation
+
+class function THelpCommand.CommandName: ShortString;
+begin
+  Result := 'help';
+end;
 
 procedure THelpCommand.Run;
 var
