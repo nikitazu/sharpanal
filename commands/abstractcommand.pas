@@ -8,9 +8,10 @@ uses
   Classes, SysUtils, CustApp;
 
 type
-  TAbstractCommand = class(TObject)
+  TAbstractCommand = class(TComponent)
     public
-      constructor Create(name: String; app: TCustomApplication);
+      constructor Create(aOwner: TComponent); override;
+      constructor Create(app: TCustomApplication; aName: String);
       destructor Destroy; override;
       procedure Run; virtual;
     protected
@@ -20,9 +21,15 @@ type
 
 implementation
 
-constructor TAbstractCommand.Create(name: String; app: TCustomApplication);
+constructor TAbstractCommand.Create(aOwner: TComponent);
 begin
-  _name := name;
+  inherited;
+end;
+
+constructor TAbstractCommand.Create(app: TCustomApplication; aName: String);
+begin
+  inherited Create(app);
+  _name := aName;
   _app := app;
   WriteLn('command [', _name, '] create');
   WriteLn('command [', _name, '] create done');
@@ -31,6 +38,7 @@ end;
 destructor TAbstractCommand.Destroy;
 begin
   WriteLn('command [', _name, '] destroyed');
+  inherited;
 end;
 
 procedure TAbstractCommand.Run;

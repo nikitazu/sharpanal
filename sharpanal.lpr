@@ -6,8 +6,9 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes, SysUtils, strutils, CustApp, FileUtil,
+  Classes, SysUtils, CustApp,
   { you can add units after this }
+  strutils, FileUtil,
   Configuration,
   AbstractCommand,
   InitCommand, LinkCommand, ConfigCommand, UpdateIndexCommand, HelpCommand;
@@ -22,7 +23,6 @@ type
   public
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
-    procedure WriteHelp; virtual;
   end;
 
 { TSharpAnal }
@@ -47,20 +47,14 @@ begin
 
   command := nil;
   case commandName of
-  'config': command := TConfigCommand.Create(commandName, self);
-  'init':   command := TInitCommand.Create(commandName, self);
-  'link':   command := TLinkCommand.Create(commandName, self);
-  'update': command := TUpdateCommand.Create(commandName, self);
-  otherwise command := THelpCommand.Create('help', self);
+  'config': command := TConfigCommand.Create(self, commandName);
+  'init':   command := TInitCommand.Create(self, commandName);
+  'link':   command := TLinkCommand.Create(self, commandName);
+  'update': command := TUpdateCommand.Create(self, commandName);
+  otherwise command := THelpCommand.Create(self, commandName);
   end;
 
-  if command <> nil then begin
-    try
-      command.Run;
-    finally
-      command.Free;
-    end;
-  end;
+  if command <> nil then command.Run;
 
   // stop program loop
   Terminate;
@@ -75,18 +69,6 @@ end;
 destructor TSharpAnal.Destroy;
 begin
   inherited Destroy;
-end;
-
-procedure TSharpAnal.WriteHelp;
-var
-  filename: String;
-begin
-  filename := ExtractFileNameOnly(ExeName);
-  writeln('Usage: ',filename,' -h');
-  writeln(filename,' config --key foo');
-  writeln(filename,' init --name db');
-  writeln(filename,' link --name db --path vs/projects/solution.sln');
-  writeln(filename,' update --name db');
 end;
 
 var
