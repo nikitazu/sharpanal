@@ -24,7 +24,7 @@ var
   configFile: TINIFile;
   value: String;
 begin
-
+  inherited;
   error := _app.CheckOptions('hk:v:','help key: value:');
   if error <> '' then begin
      _app.ShowException(Exception.Create(error));

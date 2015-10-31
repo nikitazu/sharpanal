@@ -23,7 +23,7 @@ var
   config: TConfig;
   databasePath: String;
 begin
-
+  inherited;
   error := _app.CheckOptions('hn:','help name:');
   if error <> '' then begin
      _app.ShowException(Exception.Create(error));

@@ -20,6 +20,7 @@ procedure THelpCommand.Run;
 var
   filename: String;
 begin
+  inherited;
   filename := ExtractFileNameOnly(_app.ExeName);
   writeln('Usage: ',filename,' -h');
   writeln(filename,' config --key foo');

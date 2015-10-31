@@ -24,7 +24,7 @@ var
   config: TConfig;
   configFile: TINIFile;
 begin
-
+  inherited;
   error := _app.CheckOptions('hn:p:','help name: path:');
   if error <> '' then begin
      _app.ShowException(Exception.Create(error));
