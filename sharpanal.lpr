@@ -8,7 +8,8 @@ uses
   {$ENDIF}{$ENDIF}
   Classes, SysUtils, CustApp, FileUtil,
   { you can add units after this }
-  InitCommand, LinkCommand, ConfigCommand, Configuration;
+  Configuration,
+  InitCommand, LinkCommand, ConfigCommand, UpdateIndexCommand;
 
 type
 
@@ -30,7 +31,7 @@ var
   ErrorMsg: String;
 begin
   // quick check parameters
-  ErrorMsg:=CheckOptions('hciln','help config init link name');
+  ErrorMsg:=CheckOptions('hcilun','help config init link update name');
   if ErrorMsg<>'' then begin
     ShowException(Exception.Create(ErrorMsg));
     Terminate;
@@ -62,6 +63,12 @@ begin
     Exit;
   end;
 
+  if HasOption('u','update') then begin
+    UpdateIndexCommand.Run(GetOptionValue('u','update'));
+    Terminate;
+    Exit;
+  end;
+
   // no commands found, print usage
   // TODO: replace it with interactive mode
   WriteHelp;
@@ -89,6 +96,7 @@ begin
   writeln(filename,' --config key');
   writeln(filename,' --init dbname');
   writeln(filename,' --link path/to/solution.sln --name dbname');
+  writeln(filename,' --update dbname');
 end;
 
 var
