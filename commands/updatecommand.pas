@@ -14,6 +14,8 @@ type
       class function CommandName: ShortString;
     protected
       procedure OnRun; override;
+      function ShortOptions: String; override;
+      function LongOptions: String; override;
   end;
 
 implementation
@@ -25,18 +27,10 @@ end;
 
 procedure TUpdateCommand.OnRun;
 var
-  argsError: String;
   projectName: String;
   config: TConfig;
   databasePath: String;
 begin
-  argsError := _app.CheckOptions('hvn:','help verbose name:');
-  if argsError <> '' then begin
-     _app.ShowException(Exception.Create(argsError));
-     _app.Terminate;
-     Exit;
-  end;
-
   projectName := _app.GetOptionValue('n','name');
   Log('start: ' + projectName);
   config := TConfig.Create;
@@ -46,6 +40,16 @@ begin
     Error('missing argument - name');
     Log('hint: name should be the same as in init command');
   end;
+end;
+
+function TUpdateCommand.ShortOptions: String;
+begin
+  Result := 'n:';
+end;
+
+function TUpdateCommand.LongOptions: String;
+begin
+  Result := 'name:';
 end;
 
 end.

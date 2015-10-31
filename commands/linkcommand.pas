@@ -14,32 +14,24 @@ type
       class function CommandName: ShortString;
     protected
       procedure OnRun; override;
+      function ShortOptions: String; override;
+      function LongOptions: String; override;
   end;
 
 implementation
-
 
 class function TLinkCommand.CommandName: ShortString;
 begin
   Result := 'link';
 end;
 
-
 procedure TLinkCommand.OnRun;
 var
   projectName: String;
   pathToSolution: String;
-  argsError: String;
   config: TConfig;
   configFile: TINIFile;
 begin
-  argsError := _app.CheckOptions('hvn:p:','help verbose name: path:');
-  if argsError <> '' then begin
-     _app.ShowException(Exception.Create(argsError));
-     _app.Terminate;
-     Exit;
-  end;
-
   projectName := _app.GetOptionValue('n','name');
   pathToSolution := _app.GetOptionValue('p','path');
 
@@ -79,6 +71,16 @@ begin
       configFile.Free;
     end;
   end;
+end;
+
+function TLinkCommand.ShortOptions: String;
+begin
+  Result := 'n:p:';
+end;
+
+function TLinkCommand.LongOptions: String;
+begin
+  Result := 'name: path:';
 end;
 
 end.

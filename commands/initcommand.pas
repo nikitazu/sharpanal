@@ -14,6 +14,8 @@ type
       class function CommandName: ShortString;
     protected
       procedure OnRun; override;
+      function ShortOptions: String; override;
+      function LongOptions: String; override;
   end;
 
 implementation
@@ -26,17 +28,9 @@ end;
 procedure TInitCommand.OnRun;
 var
   projectName: String;
-  argsError: String;
   config: TConfig;
   databasePath: String;
 begin
-  argsError := _app.CheckOptions('hvn:','help verbose name:');
-  if argsError <> '' then begin
-     _app.ShowException(Exception.Create(argsError));
-     _app.Terminate;
-     Exit;
-  end;
-
   projectName := _app.GetOptionValue('n','name');
 
   Log('start: ' + projectName);
@@ -57,6 +51,16 @@ begin
     if not CreateDirUTF8(databasePath)
     then Error('unable to create ' + databasePath);
   end;
+end;
+
+function TInitCommand.ShortOptions: String;
+begin
+  Result := 'n:';
+end;
+
+function TInitCommand.LongOptions: String;
+begin
+  Result := 'name:';
 end;
 
 end.

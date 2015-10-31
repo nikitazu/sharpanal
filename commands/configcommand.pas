@@ -14,6 +14,8 @@ type
       class function CommandName: ShortString;
     protected
       procedure OnRun; override;
+      function ShortOptions: String; override;
+      function LongOptions: String; override;
   end;
 
 implementation
@@ -26,18 +28,10 @@ end;
 procedure TConfigCommand.OnRun;
 var
   key: String;
-  argsError: String;
   config: TConfig;
   configFile: TINIFile;
   value: String;
 begin
-  argsError := _app.CheckOptions('hvk:s:','help verbose key: set:');
-  if argsError <> '' then begin
-     _app.ShowException(Exception.Create(argsError));
-     _app.Terminate;
-     Exit;
-  end;
-
   key := _app.GetOptionValue('k','key');
 
   Log('start');
@@ -57,6 +51,16 @@ begin
   finally
     configFile.Free;
   end;
+end;
+
+function TConfigCommand.ShortOptions: String;
+begin
+  Result := 'k:s:';
+end;
+
+function TConfigCommand.LongOptions: String;
+begin
+  Result := 'key: set:';
 end;
 
 end.
