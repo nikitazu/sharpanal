@@ -10,6 +10,8 @@ uses
   dbf, db;
 
 type
+  TRecordCallback = procedure(args: Array of const) of object;
+
   TDbfIndexedStorage = Class(TComponent)
     private
       _isDebug: Boolean;
@@ -40,7 +42,7 @@ type
         solutionId: Integer;
         projectId: Integer): Integer;
 
-      procedure SolutionsDo;
+      procedure SolutionsDo(cb: TRecordCallback);
 
       property IsDebug : Boolean write _isDebug default False;
       property DatabasePath : String write SetDatabasePath;
@@ -113,7 +115,7 @@ begin
 end;
 
 
-procedure TDbfIndexedStorage.SolutionsDo;
+procedure TDbfIndexedStorage.SolutionsDo(cb: TRecordCallback);
 begin
   Log('solutions do');
   with _solutionsTable do begin
@@ -121,7 +123,7 @@ begin
     try
       First;
       while not EOF do begin
-        WriteLn('id=',FieldByName('solution_id').AsInteger,' title=',FieldByName('title').AsString);
+        cb([FieldByName('solution_id').AsInteger, FieldByName('title').AsString]);
         Next;
       end;
     finally

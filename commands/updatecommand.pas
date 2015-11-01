@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils,
   AbstractCommand,
-  SolutionModel, ProjectModel, FileModel,
+  SolutionModel,
   DbfIndexedStorage;
 
 type

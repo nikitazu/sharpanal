@@ -7,13 +7,13 @@ interface
 uses
   Classes, SysUtils,
   AbstractCommand,
-  SolutionModel, ProjectModel, FileModel,
   DbfIndexedStorage;
 
 type
   TFindCommand = class(TAbstractCommand)
     public
       class function CommandName: ShortString;
+      procedure OnFindSolution(args: Array of const);
     protected
       procedure OnRun; override;
       function ShortOptions: String; override;
@@ -33,7 +33,6 @@ var
   databasePath: String;
   pathToSolution: String;
   storage: TDbfIndexedStorage;
-  solution: TSolutionModel;
 begin
   projectName := _app.GetOptionValue('n','name');
 
@@ -51,7 +50,7 @@ begin
         storage := TDbfIndexedStorage.Create(self);
         storage.IsDebug := _app.HasOption('v','verbose');
         storage.DatabasePath := databasePath;
-        storage.SolutionsDo;
+        storage.SolutionsDo(@OnFindSolution);
       except
         on e : Exception do begin
           Error(Format('%s - %s', [e.ClassName, e.Message]));
@@ -59,6 +58,16 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TFindCommand.OnFindSolution(args: Array of const);
+var
+  id: Integer;
+  title: String;
+begin
+  id := args[0].VInteger;
+  title := AnsiString(args[1].VAnsiString);
+  WriteLn(Format('solution #%d %s', [id, title]));
 end;
 
 function TFindCommand.ShortOptions: String;
