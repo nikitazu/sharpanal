@@ -37,14 +37,14 @@ begin
   Log('start: ' + projectName);
   databasePath := _config.GetDatabasePath(projectName);
 
-  if AssertNotEmpty(projectName, 'name', 'name should be a string')
-  and AssertPathNotExists(databasePath, 'initialize to not yet created directory')
-  then begin
-    Log('create dir: ' + databasePath);
-    if not ForceDirectoriesUTF8(databasePath)
-    then Error('unable to create ' + databasePath)
-    else begin
-      try
+  if AssertNotEmpty(projectName, 'name', 'name should be a string') then begin
+    if _app.HasOption('f','force') then DeleteDirectory(databasePath, False);
+    if AssertPathNotExists(databasePath, 'initialize to not yet created directory')
+    then begin
+      Log('create dir: ' + databasePath);
+      if not ForceDirectoriesUTF8(databasePath) then
+        Error('unable to create ' + databasePath)
+      else try
         storage := TDbfIndexedStorage.Create(self);
         storage.IsDebug := _app.HasOption('v','verbose');
         storage.DatabasePath := databasePath;
@@ -61,12 +61,12 @@ end;
 
 function TInitCommand.ShortOptions: String;
 begin
-  Result := 'n:';
+  Result := 'n:f';
 end;
 
 function TInitCommand.LongOptions: String;
 begin
-  Result := 'name:';
+  Result := 'name: force';
 end;
 
 end.
