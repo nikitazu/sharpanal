@@ -6,7 +6,9 @@ interface
 
 uses
   Classes, SysUtils,
-  AbstractCommand;
+  AbstractCommand,
+  SolutionModel, ProjectModel, FileModel,
+  DbfIndexedStorage;
 
 type
   TUpdateCommand = class(TAbstractCommand)
@@ -30,6 +32,8 @@ var
   projectName: String;
   databasePath: String;
   pathToSolution: String;
+  storage: TDbfIndexedStorage;
+  solution: TSolutionModel;
 begin
   projectName := _app.GetOptionValue('n','name');
 
@@ -43,7 +47,18 @@ begin
     and AssertFileExists(pathToSolution, 'path should lead to Visual Studio solution file')
     then begin
       Log('analizing ' + pathToSolution);
-      WriteLn('TODO');
+      try
+        storage := TDbfIndexedStorage.Create(self);
+        storage.IsDebug := _app.HasOption('v','verbose');
+        storage.DatabasePath := databasePath;
+        solution := TSolutionModel.Create(self);
+        solution.Load(pathToSolution);
+        storage.AppendSolution(solution.Title);
+      except
+        on e : Exception do begin
+          Error(Format('%s - %s', [e.ClassName, e.Message]));
+        end;
+      end;
     end;
   end;
 end;

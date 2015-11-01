@@ -13,17 +13,19 @@ type
   TDbfIndexedStorage = Class(TComponent)
     private
       _isDebug: Boolean;
+      _databasePath: String;
       _solutionsTable: TDbf;
       _projectsTable: TDbf;
       _filesTable: TDbf;
     private
-      procedure CreateSolutionsTable(path: String);
-      procedure CreateProjectsTable(path: String);
-      procedure CreateFilesTable(path: String);
+      procedure CreateSolutionsTable;
+      procedure CreateProjectsTable;
+      procedure CreateFilesTable;
+      procedure SetDatabasePath(path: String);
       procedure Log(message: String);
     public
       constructor Create(aOwner: TComponent); override;
-      procedure CreateTables(path: String);
+      procedure CreateTables;
 
       function AppendSolution(title: String): Integer;
 
@@ -38,7 +40,8 @@ type
         solutionId: Integer;
         projectId: Integer): Integer;
 
-      property IsDebug : Boolean write _isDebug;
+      property IsDebug : Boolean write _isDebug default False;
+      property DatabasePath : String write SetDatabasePath;
   end;
 
 implementation
@@ -46,22 +49,24 @@ implementation
 constructor TDbfIndexedStorage.Create(aOwner: TComponent);
 begin
   inherited Create(aOwner);
-  _isDebug := False;
   _solutionsTable := TDbf.Create(self);
+  _solutionsTable.TableLevel := 7;
+  _solutionsTable.TableName := 'solutions.dbf';
   _projectsTable := TDbf.Create(self);
+  _projectsTable.TableLevel := 7;
+  _projectsTable.TableName := 'projects.dbf';
   _filesTable := TDbf.Create(self);
+  _filesTable.TableLevel := 7;
+  _filesTable.TableName := 'files.dbf';
 end;
 
-procedure TDbfIndexedStorage.CreateTables(path: String);
+procedure TDbfIndexedStorage.CreateTables;
 begin
   Log('create tables');
-  ForceDirectories(path);
-  Log('create table solutions');
-  CreateSolutionsTable(path);
-  Log('create table projects');
-  CreateProjectsTable(path);
-  Log('create table files');
-  CreateFilesTable(path);
+  ForceDirectories(_databasePath);
+  CreateSolutionsTable;
+  CreateProjectsTable;
+  CreateFilesTable;
   Log('create tables done');
 end;
 
@@ -69,8 +74,14 @@ function TDbfIndexedStorage.AppendSolution(title: String): Integer;
 begin
   Log('append solution ' + title);
   with _solutionsTable do begin
-    AppendRecord([nil, title]);
-    Result := FieldValues['solution_id'];
+    Log('solutions table file path ' + FilePath);
+    Log('solutions table file path full ' + FilePathFull);
+    Open;
+    Append;
+    FieldByName('title').AsString := title;
+    Post;
+    Result := FieldByName('solution_id').AsInteger;
+    Close;
   end;
 end;
 
@@ -81,7 +92,7 @@ function TDbfIndexedStorage.AppendProject(
 begin
   Log('append project ' + title);
   with _projectsTable do begin
-    AppendRecord([nil, title, path, solutionId]);
+    AppendRecord([title, path, solutionId]);
     Result := FieldValues['project_id'];
   end;
 end;
@@ -94,19 +105,17 @@ function TDbfIndexedStorage.AppendFile(
 begin
   Log('append file ' + title);
   with _projectsTable do begin
-    AppendRecord([nil, title, path, solutionId, projectId]);
+    AppendRecord([title, path, solutionId, projectId]);
     Result := FieldValues['file_id'];
   end;
 end;
 
-procedure TDbfIndexedStorage.CreateSolutionsTable(path: String);
+procedure TDbfIndexedStorage.CreateSolutionsTable;
 begin
+  Log('create table solutions');
   with _solutionsTable do begin
     try
-      FilePath := AppendPathDelim(path);
-      TableLevel := 7;
       Exclusive := True;
-      TableName := 'solutions.dbf';
       Log('solutions add columns');
       with FieldDefs do begin
         Add('solution_id', ftAutoInc, 0, True);
@@ -125,14 +134,12 @@ begin
   end;
 end;
 
-procedure TDbfIndexedStorage.CreateProjectsTable(path: String);
+procedure TDbfIndexedStorage.CreateProjectsTable;
 begin
+  Log('create table projects');
   with _projectsTable do begin
     try
-      FilePath := AppendPathDelim(path);
-      TableLevel := 7;
       Exclusive := True;
-      TableName := 'projects.dbf';
       Log('projects add columns');
       with FieldDefs do begin
         Add('project_id', ftAutoInc, 0, True);
@@ -146,7 +153,6 @@ begin
       Log('projects index');
       AddIndex('ix_p_pid', 'project_id', [ixPrimary, ixUnique]);
       AddIndex('ix_p_title', 'title', [ixCaseInsensitive, ixUnique]);
-      AddIndex('ix_p_path', 'path', [ixCaseInsensitive, ixUnique]);
       AddIndex('ix_ps_sid', 'solution_id', []);
     finally
       Log('close table projects');
@@ -155,14 +161,12 @@ begin
   end;
 end;
 
-procedure TDbfIndexedStorage.CreateFilesTable(path: String);
+procedure TDbfIndexedStorage.CreateFilesTable;
 begin
+  Log('create table files');
   with _filesTable do begin
     try
-      FilePath := AppendPathDelim(path);
-      TableLevel := 7;
       Exclusive := True;
-      TableName := 'files.dbf';
       Log('files add columns');
       with FieldDefs do begin
         Add('file_id', ftAutoInc, 0, True);
@@ -177,7 +181,6 @@ begin
       Log('files index');
       AddIndex('ix_f_f_id', 'file_id', [ixPrimary, ixUnique]);
       AddIndex('ix_f_title', 'title', [ixCaseInsensitive]);
-      AddIndex('ix_f_path', 'path', [ixCaseInsensitive]);
       AddIndex('ix_fs_sid', 'solution_id', []);
       AddIndex('ix_fp_pid', 'project_id', []);
     finally
@@ -185,6 +188,14 @@ begin
       Close;
     end;
   end;
+end;
+
+procedure TDbfIndexedStorage.SetDatabasePath(path: String);
+begin
+  _databasePath := AppendPathDelim(path);
+  _solutionsTable.FilePath := _databasePath;
+  _projectsTable.FilePath := _databasePath;
+  _filesTable.FilePath := _databasePath;
 end;
 
 procedure TDbfIndexedStorage.Log(message: String);

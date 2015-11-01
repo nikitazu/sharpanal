@@ -47,7 +47,8 @@ begin
       try
         storage := TDbfIndexedStorage.Create(self);
         storage.IsDebug := _app.HasOption('v','verbose');
-        storage.CreateTables(databasePath);
+        storage.DatabasePath := databasePath;
+        storage.CreateTables;
       except
         on e : Exception do begin
           Error(Format('%s - %s', [e.ClassName, e.Message]));
