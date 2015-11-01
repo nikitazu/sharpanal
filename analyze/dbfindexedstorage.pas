@@ -46,6 +46,8 @@ type
       procedure ProjectsDo(cb: TRecordCallback);
       procedure FilesDo(cb: TRecordCallback);
 
+      procedure FindFiles(cb: TRecordCallback; query: String);
+
       property IsDebug : Boolean write _isDebug default False;
       property DatabasePath : String write SetDatabasePath;
   end;
@@ -183,6 +185,24 @@ begin
         ,   FieldByName('solution_id').AsInteger
         ,   FieldByName('project_id').AsInteger]);
         Next;
+      end;
+    finally
+      Close;
+    end;
+  end;
+end;
+
+procedure TDbfIndexedStorage.FindFiles(cb: TRecordCallback; query: String);
+begin
+  with _filesTable do begin
+    Open;
+    try
+      if Locate('title', query, []) then begin
+        cb([FieldByName('file_id').AsInteger
+        ,   FieldByName('title').AsString
+        ,   FieldByName('path').AsString
+        ,   FieldByName('solution_id').AsInteger
+        ,   FieldByName('project_id').AsInteger]);
       end;
     finally
       Close;

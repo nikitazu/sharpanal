@@ -57,14 +57,17 @@ begin
         query := Trim(_app.GetOptionValue('q','query'));
         queryType := Trim(_app.GetOptionValue('t','type'));
 
-        if (queryType = '') or (queryType = 'solution')
-        then storage.SolutionsDo(@OnFindSolution);
-
-        if (queryType = '') or (queryType = 'project')
-        then storage.ProjectsDo(@OnFindProject);
-
-        if (queryType = '') or (queryType = 'file')
-        then storage.FilesDo(@OnFindFile);
+        if query = '' then begin
+          if (queryType = '') or (queryType = 'solution')
+          then storage.SolutionsDo(@OnFindSolution);
+          if (queryType = '') or (queryType = 'project')
+          then storage.ProjectsDo(@OnFindProject);
+          if (queryType = '') or (queryType = 'file')
+          then storage.FilesDo(@OnFindFile);
+        end else begin
+          // todo search in files
+          storage.FindFiles(@OnFindFile, query);
+        end;
       except
         on e : Exception do begin
           Error(Format('%s - %s', [e.ClassName, e.Message]));
