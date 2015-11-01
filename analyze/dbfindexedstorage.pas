@@ -116,7 +116,7 @@ function TDbfIndexedStorage.AppendFile(
   projectId: Integer): Integer;
 begin
   Log('append file ' + title);
-  with _projectsTable do begin
+  with _filesTable do begin
     Open;
     Append;
     FieldByName('title').AsString := title;
