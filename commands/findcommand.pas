@@ -110,7 +110,7 @@ begin
   title := AnsiString(args[1].VAnsiString);
   path := AnsiString(args[2].VAnsiString);
   solutionId := args[3].VInteger;
-  projectId := args[3].VInteger;
+  projectId := args[4].VInteger;
   WriteLn(Format('file #%d %s - %s (s#%d p#%d)', [fileId, title, path, solutionId, projectId]));
 end;
 
