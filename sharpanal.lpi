@@ -35,7 +35,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="12">
+    <Units Count="13">
       <Unit0>
         <Filename Value="sharpanal.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -95,6 +95,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="FileModel"/>
       </Unit11>
+      <Unit12>
+        <Filename Value="analyze\dbfindexedstorage.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="DbfIndexedStorage"/>
+      </Unit12>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -105,7 +110,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="commands;common;analyze\csharp"/>
+      <OtherUnitFiles Value="commands;common;analyze\csharp;analyze"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
   </CompilerOptions>

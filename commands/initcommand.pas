@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil,
-  AbstractCommand;
+  AbstractCommand,
+  DbfIndexedStorage;
 
 type
   TInitCommand = class(TAbstractCommand)
@@ -29,6 +30,7 @@ procedure TInitCommand.OnRun;
 var
   projectName: String;
   databasePath: String;
+  storage: TDbfIndexedStorage;
 begin
   projectName := _app.GetOptionValue('n','name');
 
@@ -39,8 +41,20 @@ begin
   and AssertPathNotExists(databasePath, 'initialize to not yet created directory')
   then begin
     Log('create dir: ' + databasePath);
-    if not CreateDirUTF8(databasePath)
-    then Error('unable to create ' + databasePath);
+    if not ForceDirectoriesUTF8(databasePath)
+    then Error('unable to create ' + databasePath)
+    else begin
+      try
+        storage := TDbfIndexedStorage.Create(self);
+        storage.IsDebug := _app.HasOption('v','verbose');
+        storage.CreateTables(databasePath);
+      except
+        on e : Exception do begin
+          Error(Format('%s - %s', [e.ClassName, e.Message]));
+          DeleteDirectory(databasePath, False);
+        end;
+      end;
+    end;
   end;
 end;
 
