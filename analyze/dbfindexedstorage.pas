@@ -196,13 +196,18 @@ procedure TDbfIndexedStorage.FindFiles(cb: TRecordCallback; query: String);
 begin
   with _filesTable do begin
     Open;
+    FilterOptions := [foCaseInsensitive];
+    Filter := 'title=' + QuotedStr(query);
+    Filtered := True;
     try
-      if Locate('title', query, []) then begin
+      First;
+      while not EOF do begin
         cb([FieldByName('file_id').AsInteger
         ,   FieldByName('title').AsString
         ,   FieldByName('path').AsString
         ,   FieldByName('solution_id').AsInteger
         ,   FieldByName('project_id').AsInteger]);
+        Next;
       end;
     finally
       Close;
