@@ -11,6 +11,7 @@ uses
   InitCommand,
   LinkCommand,
   UpdateCommand,
+  FindCommand,
   HelpCommand;
 
 type
@@ -35,6 +36,7 @@ begin
   _commands.Add(TInitCommand.CommandName, TInitCommand.ClassType);
   _commands.Add(TLinkCommand.CommandName, TLinkCommand.ClassType);
   _commands.Add(TUpdateCommand.CommandName, TUpdateCommand.ClassType);
+  _commands.Add(TFindCommand.CommandName, TFindCommand.ClassType);
   _commands.Add(THelpCommand.CommandName, THelpCommand.ClassType);
 end;
 

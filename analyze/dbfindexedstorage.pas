@@ -40,6 +40,8 @@ type
         solutionId: Integer;
         projectId: Integer): Integer;
 
+      procedure SolutionsDo;
+
       property IsDebug : Boolean write _isDebug default False;
       property DatabasePath : String write SetDatabasePath;
   end;
@@ -107,6 +109,24 @@ begin
   with _projectsTable do begin
     AppendRecord([title, path, solutionId, projectId]);
     Result := FieldValues['file_id'];
+  end;
+end;
+
+
+procedure TDbfIndexedStorage.SolutionsDo;
+begin
+  Log('solutions do');
+  with _solutionsTable do begin
+    Open;
+    try
+      First;
+      while not EOF do begin
+        WriteLn('id=',FieldByName('solution_id').AsInteger,' title=',FieldByName('title').AsString);
+        Next;
+      end;
+    finally
+      Close;
+    end;
   end;
 end;
 
