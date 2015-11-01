@@ -80,13 +80,12 @@ function TDbfIndexedStorage.AppendSolution(title: String): Integer;
 begin
   Log('append solution ' + title);
   with _solutionsTable do begin
-    Log('solutions table file path ' + FilePath);
-    Log('solutions table file path full ' + FilePathFull);
     Open;
     Append;
     FieldByName('title').AsString := title;
     Post;
     Result := FieldByName('solution_id').AsInteger;
+    Log(Format('solution #%d appended', [Result]));
     Close;
   end;
 end;
@@ -98,8 +97,15 @@ function TDbfIndexedStorage.AppendProject(
 begin
   Log('append project ' + title);
   with _projectsTable do begin
-    AppendRecord([title, path, solutionId]);
-    Result := FieldValues['project_id'];
+    Open;
+    Append;
+    FieldByName('title').AsString := title;
+    FieldByName('path').AsString := path;
+    FieldByName('solution_id').AsInteger := solutionId;
+    Post;
+    Result := FieldByName('project_id').AsInteger;
+    Log(Format('project #%d appended', [Result]));
+    Close;
   end;
 end;
 
@@ -111,8 +117,16 @@ function TDbfIndexedStorage.AppendFile(
 begin
   Log('append file ' + title);
   with _projectsTable do begin
-    AppendRecord([title, path, solutionId, projectId]);
-    Result := FieldValues['file_id'];
+    Open;
+    Append;
+    FieldByName('title').AsString := title;
+    FieldByName('path').AsString := path;
+    FieldByName('solution_id').AsInteger := solutionId;
+    FieldByName('project_id').AsInteger := projectId;
+    Post;
+    Result := FieldByName('file_id').AsInteger;
+    Log(Format('file #%d appended', [Result]));
+    Close;
   end;
 end;
 
@@ -146,7 +160,7 @@ begin
         cb([FieldByName('project_id').AsInteger
         ,   FieldByName('title').AsString
         ,   FieldByName('path').AsString
-        ,   FieldByName('solution_id').AsString]);
+        ,   FieldByName('solution_id').AsInteger]);
         Next;
       end;
     finally
@@ -166,8 +180,8 @@ begin
         cb([FieldByName('file_id').AsInteger
         ,   FieldByName('title').AsString
         ,   FieldByName('path').AsString
-        ,   FieldByName('solution_id').AsString
-        ,   FieldByName('project_id').AsString]);
+        ,   FieldByName('solution_id').AsInteger
+        ,   FieldByName('project_id').AsInteger]);
         Next;
       end;
     finally
