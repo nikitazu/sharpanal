@@ -43,6 +43,8 @@ type
         projectId: Integer): Integer;
 
       procedure SolutionsDo(cb: TRecordCallback);
+      procedure ProjectsDo(cb: TRecordCallback);
+      procedure FilesDo(cb: TRecordCallback);
 
       property IsDebug : Boolean write _isDebug default False;
       property DatabasePath : String write SetDatabasePath;
@@ -123,7 +125,49 @@ begin
     try
       First;
       while not EOF do begin
-        cb([FieldByName('solution_id').AsInteger, FieldByName('title').AsString]);
+        cb([FieldByName('solution_id').AsInteger
+        ,   FieldByName('title').AsString]);
+        Next;
+      end;
+    finally
+      Close;
+    end;
+  end;
+end;
+
+procedure TDbfIndexedStorage.ProjectsDo(cb: TRecordCallback);
+begin
+  Log('projects do');
+  with _projectsTable do begin
+    Open;
+    try
+      First;
+      while not EOF do begin
+        cb([FieldByName('project_id').AsInteger
+        ,   FieldByName('title').AsString
+        ,   FieldByName('path').AsString
+        ,   FieldByName('solution_id').AsString]);
+        Next;
+      end;
+    finally
+      Close;
+    end;
+  end;
+end;
+
+procedure TDbfIndexedStorage.FilesDo(cb: TRecordCallback);
+begin
+  Log('files do');
+  with _filesTable do begin
+    Open;
+    try
+      First;
+      while not EOF do begin
+        cb([FieldByName('file_id').AsInteger
+        ,   FieldByName('title').AsString
+        ,   FieldByName('path').AsString
+        ,   FieldByName('solution_id').AsString
+        ,   FieldByName('project_id').AsString]);
         Next;
       end;
     finally
