@@ -35,6 +35,8 @@ var
   databasePath: String;
   pathToSolution: String;
   storage: TDbfIndexedStorage;
+  query: String;
+  queryType: String;
 begin
   projectName := _app.GetOptionValue('n','name');
 
@@ -52,9 +54,17 @@ begin
         storage := TDbfIndexedStorage.Create(self);
         storage.IsDebug := _app.HasOption('v','verbose');
         storage.DatabasePath := databasePath;
-        storage.SolutionsDo(@OnFindSolution);
-        storage.ProjectsDo(@OnFindProject);
-        storage.FilesDo(@OnFindFile);
+        query := Trim(_app.GetOptionValue('q','query'));
+        queryType := Trim(_app.GetOptionValue('t','type'));
+
+        if (queryType = '') or (queryType = 'solution')
+        then storage.SolutionsDo(@OnFindSolution);
+
+        if (queryType = '') or (queryType = 'project')
+        then storage.ProjectsDo(@OnFindProject);
+
+        if (queryType = '') or (queryType = 'file')
+        then storage.FilesDo(@OnFindFile);
       except
         on e : Exception do begin
           Error(Format('%s - %s', [e.ClassName, e.Message]));
@@ -106,12 +116,12 @@ end;
 
 function TFindCommand.ShortOptions: String;
 begin
-  Result := 'n:q';
+  Result := 'n:q:t:';
 end;
 
 function TFindCommand.LongOptions: String;
 begin
-  Result := 'name: query solutions projects files all';
+  Result := 'name: query: type:';
 end;
 
 end.
