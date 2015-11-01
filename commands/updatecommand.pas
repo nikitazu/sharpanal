@@ -8,7 +8,7 @@ uses
   Classes, SysUtils,
   FileUtil,
   AbstractCommand,
-  SolutionModel, ProjectModel,
+  SolutionModel, ProjectModel, FileModel,
   DbfIndexedStorage;
 
 type
@@ -39,6 +39,10 @@ var
   projectRelativePath: String;
   projectFullPath: String;
   project: TProjectModel;
+  projectId: Integer;
+  fileRelativePath: String;
+  fileFullPath: String;
+  fileModel: TFileModel;
 begin
   projectName := _app.GetOptionValue('n','name');
 
@@ -65,7 +69,15 @@ begin
           Log('load project: ' + projectFullPath);
           project := TProjectModel.Create(solution);
           project.Load(projectFullPath);
-          storage.AppendProject(project.Title, projectRelativePath, solutionId);
+          projectId := storage.AppendProject(project.Title, projectRelativePath, solutionId);
+          for fileRelativePath in project.Files do begin
+            fileFullPath := AppendPathDelim(ExtractFileDir(projectFullPath)) +
+              fileRelativePath;
+            Log('load file: ' + fileFullPath);
+            fileModel := TFileModel.Create(project);
+            fileModel.Load(fileFullPath);
+            storage.AppendFile(fileModel.Title, fileRelativePath, solutionId, projectId);
+          end;
         end;
       except
         on e : Exception do begin
