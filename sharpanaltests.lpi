@@ -35,7 +35,7 @@
         <PackageName Value="FCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="3">
+    <Units Count="4">
       <Unit0>
         <Filename Value="sharpanaltests.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -50,6 +50,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="ProjectModelTests"/>
       </Unit2>
+      <Unit3>
+        <Filename Value="analyze\csharp\filemodeltests.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FileModelTests"/>
+      </Unit3>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
