@@ -6,8 +6,9 @@ interface
 
 uses
   Classes, SysUtils,
+  FileUtil,
   AbstractCommand,
-  SolutionModel,
+  SolutionModel, ProjectModel,
   DbfIndexedStorage;
 
 type
@@ -34,6 +35,10 @@ var
   pathToSolution: String;
   storage: TDbfIndexedStorage;
   solution: TSolutionModel;
+  solutionId: Integer;
+  projectRelativePath: String;
+  projectFullPath: String;
+  project: TProjectModel;
 begin
   projectName := _app.GetOptionValue('n','name');
 
@@ -53,7 +58,15 @@ begin
         storage.DatabasePath := databasePath;
         solution := TSolutionModel.Create(self);
         solution.Load(pathToSolution);
-        storage.AppendSolution(solution.Title);
+        solutionId := storage.AppendSolution(solution.Title);
+        for projectRelativePath in solution.Projects do begin
+          projectFullPath := AppendPathDelim(ExtractFileDir(pathToSolution)) +
+            projectRelativePath;
+          Log('load project: ' + projectFullPath);
+          project := TProjectModel.Create(solution);
+          project.Load(projectFullPath);
+          storage.AppendProject(project.Title, projectRelativePath, solutionId);
+        end;
       except
         on e : Exception do begin
           Error(Format('%s - %s', [e.ClassName, e.Message]));
