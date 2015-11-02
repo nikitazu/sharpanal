@@ -6,6 +6,7 @@ interface
 
 uses
   Classes, SysUtils, fpcunit, testregistry,
+  FileUtil,
   ProjectModel;
 
 type
@@ -24,7 +25,14 @@ implementation
 
 procedure TProjectModelTests.Load;
 begin
-  _project.Load('..\testdata\analyze\csharp\SimpleWallet.Core\SimpleWallet.Core.csproj');
+  _project.Load(
+    AppendPathDelim('..') +
+    AppendPathDelim('testdata') +
+    AppendPathDelim('analyze') +
+    AppendPathDelim('csharp') +
+    AppendPathDelim('SimpleWallet.Core') +
+    'SimpleWallet.Core.csproj');
+
   AssertEquals('Title', 'SimpleWallet.Core', _project.Title);
   AssertEquals('Files count', 19, _project.Files.Count);
 

@@ -6,6 +6,7 @@ interface
 
 uses
   Classes, SysUtils, fpcunit, testregistry,
+  FileUtil,
   SolutionModel;
 
 type
@@ -24,7 +25,13 @@ implementation
 
 procedure TSolutionModelTests.TestLoad;
 begin
-  _solution.Load('..\testdata\analyze\csharp\SimpleWallet.sln');
+  _solution.Load(
+    AppendPathDelim('..') +
+    AppendPathDelim('testdata') +
+    AppendPathDelim('analyze') +
+    AppendPathDelim('csharp') +
+    'SimpleWallet.sln');
+
   AssertEquals('Title', 'SimpleWallet', _solution.Title);
   AssertEquals('Projects count', 3, _solution.Projects.Count);
 
