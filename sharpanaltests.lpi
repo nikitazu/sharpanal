@@ -35,7 +35,7 @@
         <PackageName Value="FCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="4">
+    <Units Count="5">
       <Unit0>
         <Filename Value="sharpanaltests.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -55,6 +55,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="FileModelTests"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="common\filehelperstests.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FileHelpersTests"/>
+      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -65,7 +70,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="analyze\csharp"/>
+      <OtherUnitFiles Value="analyze\csharp;common"/>
     </SearchPaths>
   </CompilerOptions>
   <Debugging>

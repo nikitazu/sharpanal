@@ -35,7 +35,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="14">
+    <Units Count="15">
       <Unit0>
         <Filename Value="sharpanal.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -105,6 +105,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="FindCommand"/>
       </Unit13>
+      <Unit14>
+        <Filename Value="common\filehelpers.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FileHelpers"/>
+      </Unit14>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

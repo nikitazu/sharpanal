@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, fpcunit, testutils, testregistry,
-  FileUtil,
+  FileHelpers,
   FileModel;
 
 type
@@ -25,14 +25,8 @@ implementation
 
 procedure TFileModelTests.Load;
 begin
-  _file.Load(
-    AppendPathDelim('..') +
-    AppendPathDelim('testdata') +
-    AppendPathDelim('analyze') +
-    AppendPathDelim('csharp') +
-    AppendPathDelim('SimpleWallet.Core') +
-    AppendPathDelim('Exporters') +
-    'QifExporter.cs');
+  _file.Load(PathCombine(
+    ['..','testdata','analyze','csharp','SimpleWallet.Core','Exporters','QifExporter.cs']));
   AssertEquals('Title', 'QifExporter', _file.Title);
 end;
 
