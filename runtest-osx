@@ -1,0 +1,9 @@
+#!/bin/sh
+# OSX style console unit test run script
+# copy this script to bin manually and change paths if needed
+
+clear &&
+lazbuild --quiet ../sharpanaltests.lpi &&
+./test --format=plain -a &&
+exit 0
+
