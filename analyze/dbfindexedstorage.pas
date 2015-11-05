@@ -7,10 +7,13 @@ interface
 uses
   Classes, SysUtils,
   FileUtil, LazLogger,
-  dbf, db;
+  dbf, db,
+  Entities;
 
 type
-  TRecordCallback = procedure(args: Array of const) of object;
+  TSolutionCallback = procedure(s: SolutionEntity) of object;
+  TProjectCallback = procedure(p: ProjectEntity) of object;
+  TFileCallback = procedure(p: FileEntity) of object;
 
   TDbfIndexedStorage = Class(TComponent)
     private
@@ -42,11 +45,10 @@ type
         solutionId: Integer;
         projectId: Integer): Integer;
 
-      procedure SolutionsDo(cb: TRecordCallback);
-      procedure ProjectsDo(cb: TRecordCallback);
-      procedure FilesDo(cb: TRecordCallback);
-
-      procedure FindFiles(cb: TRecordCallback; query: String);
+      procedure SolutionsDo(cb: TSolutionCallback);
+      procedure ProjectsDo(cb: TProjectCallback);
+      procedure FilesDo(cb: TFileCallback);
+      procedure FindFiles(cb: TFileCallback; query: String);
 
       property IsDebug : Boolean write _isDebug default False;
       property DatabasePath : String write SetDatabasePath;
@@ -133,7 +135,9 @@ begin
 end;
 
 
-procedure TDbfIndexedStorage.SolutionsDo(cb: TRecordCallback);
+procedure TDbfIndexedStorage.SolutionsDo(cb: TSolutionCallback);
+var
+  solution: SolutionEntity;
 begin
   Log('solutions do');
   with _solutionsTable do begin
@@ -141,8 +145,10 @@ begin
     try
       First;
       while not EOF do begin
-        cb([FieldByName('solution_id').AsInteger
-        ,   FieldByName('title').AsString]);
+        solution.Id := FieldByName('solution_id').AsInteger;
+        solution.Title := FieldByName('title').AsString;
+        solution.Path := ''; // TODO do I need it?
+        cb(solution);
         Next;
       end;
     finally
@@ -151,7 +157,9 @@ begin
   end;
 end;
 
-procedure TDbfIndexedStorage.ProjectsDo(cb: TRecordCallback);
+procedure TDbfIndexedStorage.ProjectsDo(cb: TProjectCallback);
+var
+  project: ProjectEntity;
 begin
   Log('projects do');
   with _projectsTable do begin
@@ -159,10 +167,11 @@ begin
     try
       First;
       while not EOF do begin
-        cb([FieldByName('project_id').AsInteger
-        ,   FieldByName('title').AsString
-        ,   FieldByName('path').AsString
-        ,   FieldByName('solution_id').AsInteger]);
+        project.Id := FieldByName('project_id').AsInteger;
+        project.Title := FieldByName('title').AsString;
+        project.Path := FieldByName('path').AsString;
+        project.SolutionId := FieldByName('solution_id').AsInteger;
+        cb(project);
         Next;
       end;
     finally
@@ -171,7 +180,9 @@ begin
   end;
 end;
 
-procedure TDbfIndexedStorage.FilesDo(cb: TRecordCallback);
+procedure TDbfIndexedStorage.FilesDo(cb: TFileCallback);
+var
+  aFile: FileEntity;
 begin
   Log('files do');
   with _filesTable do begin
@@ -179,11 +190,12 @@ begin
     try
       First;
       while not EOF do begin
-        cb([FieldByName('file_id').AsInteger
-        ,   FieldByName('title').AsString
-        ,   FieldByName('path').AsString
-        ,   FieldByName('solution_id').AsInteger
-        ,   FieldByName('project_id').AsInteger]);
+        aFile.Id := FieldByName('file_id').AsInteger;
+        aFile.Title := FieldByName('title').AsString;
+        aFile.Path := FieldByName('path').AsString;
+        aFile.SolutionId := FieldByName('solution_id').AsInteger;
+        aFile.ProjectId := FieldByName('project_id').AsInteger;
+        cb(aFile);
         Next;
       end;
     finally
@@ -192,7 +204,9 @@ begin
   end;
 end;
 
-procedure TDbfIndexedStorage.FindFiles(cb: TRecordCallback; query: String);
+procedure TDbfIndexedStorage.FindFiles(cb: TFileCallback; query: String);
+var
+  aFile: FileEntity;
 begin
   with _filesTable do begin
     Open;
@@ -202,11 +216,12 @@ begin
     try
       First;
       while not EOF do begin
-        cb([FieldByName('file_id').AsInteger
-        ,   FieldByName('title').AsString
-        ,   FieldByName('path').AsString
-        ,   FieldByName('solution_id').AsInteger
-        ,   FieldByName('project_id').AsInteger]);
+        aFile.Id := FieldByName('file_id').AsInteger;
+        aFile.Title := FieldByName('title').AsString;
+        aFile.Path := FieldByName('path').AsString;
+        aFile.SolutionId := FieldByName('solution_id').AsInteger;
+        aFile.ProjectId := FieldByName('project_id').AsInteger;
+        cb(aFile);
         Next;
       end;
     finally

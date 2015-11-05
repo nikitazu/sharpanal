@@ -7,15 +7,16 @@ interface
 uses
   Classes, SysUtils,
   AbstractCommand,
-  DbfIndexedStorage;
+  DbfIndexedStorage,
+  Entities;
 
 type
   TFindCommand = class(TAbstractCommand)
     public
       class function CommandName: ShortString;
-      procedure OnFindSolution(args: Array of const);
-      procedure OnFindProject(args: Array of const);
-      procedure OnFindFile(args: Array of const);
+      procedure OnFindSolution(s: SolutionEntity);
+      procedure OnFindProject(p: ProjectEntity);
+      procedure OnFindFile(f: FileEntity);
     protected
       procedure OnRun; override;
       function ShortOptions: String; override;
@@ -77,44 +78,21 @@ begin
   end;
 end;
 
-procedure TFindCommand.OnFindSolution(args: Array of const);
-var
-  solutionId: Integer;
-  title: String;
+procedure TFindCommand.OnFindSolution(s: SolutionEntity);
 begin
-  solutionId := args[0].VInteger;
-  title := AnsiString(args[1].VAnsiString);
-  WriteLn(Format('solution #%d %s', [solutionId, title]));
+  WriteLn(Format('solution #%d %s', [s.Id, s.Title]));
 end;
 
-procedure TFindCommand.OnFindProject(args: Array of const);
-var
-  projectId: Integer;
-  title: String;
-  path: String;
-  solutionId: Integer;
+procedure TFindCommand.OnFindProject(p: ProjectEntity);
 begin
-  projectId := args[0].VInteger;
-  title := AnsiString(args[1].VAnsiString);
-  path := AnsiString(args[2].VAnsiString);
-  solutionId := args[3].VInteger;
-  WriteLn(Format('project #%d %s - %s (s#%d)', [projectId, title, path, solutionId]));
+  WriteLn(Format('project #%d %s - %s (s#%d)',
+    [p.Id, p.Title, p.Path, p.SolutionId]));
 end;
 
-procedure TFindCommand.OnFindFile(args: Array of const);
-var
-  fileId: Integer;
-  title: String;
-  path: String;
-  solutionId: Integer;
-  projectId: Integer;
+procedure TFindCommand.OnFindFile(f: FileEntity);
 begin
-  fileId := args[0].VInteger;
-  title := AnsiString(args[1].VAnsiString);
-  path := AnsiString(args[2].VAnsiString);
-  solutionId := args[3].VInteger;
-  projectId := args[4].VInteger;
-  WriteLn(Format('file #%d %s - %s (s#%d p#%d)', [fileId, title, path, solutionId, projectId]));
+  WriteLn(Format('file #%d %s - %s (s#%d p#%d)',
+    [f.Id, f.Title, f.Path, f.SolutionId, f.ProjectId]));
 end;
 
 function TFindCommand.ShortOptions: String;
