@@ -18,6 +18,7 @@ type
   published
     procedure TestPathCombine;
     procedure TestPathCombineEmpty;
+    procedure TestNameToIndex;
   end;
 
 implementation
@@ -36,6 +37,11 @@ end;
 procedure TFileHelpersTests.TestPathCombineEmpty;
 begin
   AssertEquals('Path combine empty', '', PathCombine([]));
+end;
+
+procedure TFileHelpersTests.TestNameToIndex;
+begin
+  AssertEquals('Name to index FooBarBuz', 'fbb', NameToIndex('FooBarBuz'));
 end;
 
 procedure TFileHelpersTests.SetUp;
