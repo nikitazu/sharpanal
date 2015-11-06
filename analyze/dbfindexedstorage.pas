@@ -8,6 +8,7 @@ uses
   Classes, SysUtils,
   FileUtil, LazLogger,
   dbf, db,
+  FileHelpers,
   Entities;
 
 type
@@ -87,6 +88,7 @@ begin
     Open;
     Append;
     FieldByName('title').AsString := title;
+    FieldByName('title_index').AsString := NameToIndex(title);
     Post;
     Result := FieldByName('solution_id').AsInteger;
     Log(Format('solution #%d appended', [Result]));
@@ -104,6 +106,7 @@ begin
     Open;
     Append;
     FieldByName('title').AsString := title;
+    FieldByName('title_index').AsString := NameToIndex(title);
     FieldByName('path').AsString := path;
     FieldByName('solution_id').AsInteger := solutionId;
     Post;
@@ -124,6 +127,7 @@ begin
     Open;
     Append;
     FieldByName('title').AsString := title;
+    FieldByName('title_index').AsString := NameToIndex(title);
     FieldByName('path').AsString := path;
     FieldByName('solution_id').AsInteger := solutionId;
     FieldByName('project_id').AsInteger := projectId;
@@ -147,6 +151,7 @@ begin
       while not EOF do begin
         solution.Id := FieldByName('solution_id').AsInteger;
         solution.Title := FieldByName('title').AsString;
+        solution.TitleIndex := FieldByName('title_index').AsString;
         solution.Path := ''; // TODO do I need it?
         cb(solution);
         Next;
@@ -169,6 +174,7 @@ begin
       while not EOF do begin
         project.Id := FieldByName('project_id').AsInteger;
         project.Title := FieldByName('title').AsString;
+        project.TitleIndex := FieldByName('title_index').AsString;
         project.Path := FieldByName('path').AsString;
         project.SolutionId := FieldByName('solution_id').AsInteger;
         cb(project);
@@ -192,6 +198,7 @@ begin
       while not EOF do begin
         aFile.Id := FieldByName('file_id').AsInteger;
         aFile.Title := FieldByName('title').AsString;
+        aFile.TitleIndex := FieldByName('title_index').AsString;
         aFile.Path := FieldByName('path').AsString;
         aFile.SolutionId := FieldByName('solution_id').AsInteger;
         aFile.ProjectId := FieldByName('project_id').AsInteger;
@@ -218,6 +225,7 @@ begin
       while not EOF do begin
         aFile.Id := FieldByName('file_id').AsInteger;
         aFile.Title := FieldByName('title').AsString;
+        aFile.TitleIndex := FieldByName('title_index').AsString;
         aFile.Path := FieldByName('path').AsString;
         aFile.SolutionId := FieldByName('solution_id').AsInteger;
         aFile.ProjectId := FieldByName('project_id').AsInteger;
@@ -240,6 +248,7 @@ begin
       with FieldDefs do begin
         Add('solution_id', ftAutoInc, 0, True);
         Add('title', ftString, 100, True);
+        Add('title_index', ftString, 50, True);
       end;
       Log('solutions write to disk');
       CreateTable;
@@ -247,6 +256,7 @@ begin
       Log('solutions index');
       AddIndex('ix_s_sid', 'solution_id', [ixPrimary, ixUnique]);
       AddIndex('ix_s_title', 'title', [ixCaseInsensitive, ixUnique]);
+      AddIndex('ix_s_titleix', 'title_index', [ixCaseInsensitive]);
     finally
       Log('close table solutions');
       Close;
@@ -264,6 +274,7 @@ begin
       with FieldDefs do begin
         Add('project_id', ftAutoInc, 0, True);
         Add('title', ftString, 100, True);
+        Add('title_index', ftString, 50, True);
         Add('path', ftString, 255, True);
         Add('solution_id', ftInteger, 0, True);
       end;
@@ -273,6 +284,7 @@ begin
       Log('projects index');
       AddIndex('ix_p_pid', 'project_id', [ixPrimary, ixUnique]);
       AddIndex('ix_p_title', 'title', [ixCaseInsensitive, ixUnique]);
+      AddIndex('ix_p_titleix', 'title_index', [ixCaseInsensitive]);
       AddIndex('ix_ps_sid', 'solution_id', []);
     finally
       Log('close table projects');
@@ -291,6 +303,7 @@ begin
       with FieldDefs do begin
         Add('file_id', ftAutoInc, 0, True);
         Add('title', ftString, 100, True);
+        Add('title_index', ftString, 50, True);
         Add('path', ftString, 255, True);
         Add('solution_id', ftInteger, 0, True);
         Add('project_id', ftInteger, 0, True);
@@ -301,6 +314,7 @@ begin
       Log('files index');
       AddIndex('ix_f_f_id', 'file_id', [ixPrimary, ixUnique]);
       AddIndex('ix_f_title', 'title', [ixCaseInsensitive]);
+      AddIndex('ix_f_titleix', 'title_index', [ixCaseInsensitive]);
       AddIndex('ix_fs_sid', 'solution_id', []);
       AddIndex('ix_fp_pid', 'project_id', []);
     finally
